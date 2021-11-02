@@ -12,6 +12,4 @@
 - Visit the Trading Post, search for something and hit CTRL-H (or the big button on app)
 - Scan as many pages / orders you want.
 - Hit the Export Prices button and save the json file.
-- Wait for me to implement the Import Prices functionality.
-
-
+- Wait for me to implement the Import Prices functionality for https://gaming.tools.
