@@ -17,3 +17,6 @@ It simply takes screenshots of New World, then runs them through OCR, nothing ma
 - Scan as many pages / orders you want.
 - Hit the Export Prices button and save the json file.
 - Wait for me to implement the Import Prices functionality for https://gaming.tools.
+
+## Credits
+- https://github.com/CptWesley, author of https://github.com/CptWesley/NewWorldMinimap for inspiration and for the beautiful https://github.com/CptWesley/TesserNet library.
