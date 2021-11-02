@@ -1,6 +1,8 @@
 # New World Trading Post Data Extractor
 (Relatively) Easy to use New World trading post price extraction tool.
 
+![image](https://user-images.githubusercontent.com/93623214/139960802-ae06f4f4-6dff-4acd-b96f-af49f4603c4c.png)
+
 ## How to build
 - Install .NET 5.0 SDK (Windows x64) from https://dotnet.microsoft.com/download/dotnet/5.0
 - Run TradingPostDataExtractor\publish.cmd, which will create TradingPostDataExtractor.exe in Publish folder.
@@ -20,3 +22,5 @@ It simply takes screenshots of New World, then runs them through OCR, nothing ma
 
 ## Credits
 - https://github.com/CptWesley, author of https://github.com/CptWesley/NewWorldMinimap for inspiration and for the beautiful https://github.com/CptWesley/TesserNet library.
+
+![image](https://user-images.githubusercontent.com/93623214/139960936-45d6200a-6c9d-4d2a-965c-4727b9937d64.png)
