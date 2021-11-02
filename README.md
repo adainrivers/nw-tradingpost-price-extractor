@@ -1,4 +1,4 @@
-# New World Trading Post Data Extractor
+# New World Trading Post Price Extractor
 (Relatively) Easy to use New World trading post price extraction tool.
 
 ![image](https://user-images.githubusercontent.com/93623214/139960802-ae06f4f4-6dff-4acd-b96f-af49f4603c4c.png)
