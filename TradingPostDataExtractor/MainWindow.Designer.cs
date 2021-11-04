@@ -54,7 +54,7 @@ namespace TradingPostDataExtractor
             this.TakeScreenshotButton.Name = "TakeScreenshotButton";
             this.TakeScreenshotButton.Size = new System.Drawing.Size(226, 120);
             this.TakeScreenshotButton.TabIndex = 0;
-            this.TakeScreenshotButton.Text = "Capture Screen and Extract Prices (CTRL-H)";
+            this.TakeScreenshotButton.Text = "Capture Screen and Extract Prices (F11)";
             this.TakeScreenshotButton.UseVisualStyleBackColor = true;
             this.TakeScreenshotButton.Click += new System.EventHandler(this.OnTakeScreenshotButton_Click);
             // 

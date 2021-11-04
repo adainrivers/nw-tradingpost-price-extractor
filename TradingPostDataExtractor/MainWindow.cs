@@ -28,33 +28,35 @@ namespace TradingPostDataExtractor
         private static readonly BmpDecoder BmpDecoder = new ();
         private List<PriceData> _prices = new();
         private List<RawPriceData> _invalidPrices = new();
+        private List<RawPriceData> _rawPrices = new();
         private static readonly RawPriceDataParser PriceDataParser = new();
 
-        private readonly KeyboardHookManager khm = new();
+        private string _newWorldGameWindowDimensions;
+
+        private readonly KeyboardHookManager _keyboardHooks = new();
 
         public MainForm()
         {
             InitializeComponent();
-            khm.Start();
-            SetupHotkeys();
             SetNewWorldProcess();
         }
 
-        public static Process NewWorldProcess;
+        private static Process _newWorldProcess;
 
-        public void SetNewWorldProcess()
+        public static void SetNewWorldProcess()
         {
-            NewWorldProcess = Process.GetProcesses().FirstOrDefault(p => p.MainWindowTitle == "New World" && !p.HasExited);
+            _newWorldProcess = Process.GetProcesses().FirstOrDefault(p => p.MainWindowTitle == "New World" && !p.HasExited);
         }
 
         public void UpdateStatus()
         {
-            if (NewWorldProcess == null || NewWorldProcess.HasExited)
+            if (_newWorldProcess == null || _newWorldProcess.HasExited)
             {
                 NewWorldStatus.Text = NewWorldNotRunning;
                 NewWorldStatus.ForeColor = Color.Red;
                 TakeScreenshotButton.Enabled = false;
                 TimerProcessRefresher.Enabled = true;
+                _keyboardHooks.Stop();
             }
             else
             {
@@ -62,6 +64,7 @@ namespace TradingPostDataExtractor
                 NewWorldStatus.ForeColor = Color.Green;
                 TakeScreenshotButton.Enabled = true;
                 TimerProcessRefresher.Enabled = false;
+                _keyboardHooks.Start();
             }
 
             ExportPricesButton.Enabled = _prices.Count > 0;
@@ -78,24 +81,41 @@ namespace TradingPostDataExtractor
         {
             SafeInvoke(() =>
             {
+                _keyboardHooks.Stop();
                 var currentText = TakeScreenshotButton.Text;
                 TakeScreenshotButton.Text = "Processing";
                 TakeScreenshotButton.Enabled = false;
                 using var capturedImage = CaptureApplication();
+                if (capturedImage == null)
+                {
+                    return;
+                }
                 SetPreviewImage(capturedImage);
                 ParseImage(capturedImage);
                 TakeScreenshotButton.Text = currentText;
                 TakeScreenshotButton.Enabled = true;
+                _keyboardHooks.Start();
             });
         }
 
         private Image CaptureApplication()
         {
             var rect = new User32.Rect();
-            User32.GetWindowRect(NewWorldProcess.MainWindowHandle, ref rect);
+            User32.GetWindowRect(_newWorldProcess.MainWindowHandle, ref rect);
 
             var width = rect.right - rect.left;
             var height = rect.bottom - rect.top;
+
+
+            _newWorldGameWindowDimensions = $"{width}x{height}";
+
+            if (width != 1920 && height != 1080)
+            {
+                MessageBox.Show(
+                    $"This application only works if New World is running in Full-Screen mode at 1920x1080 resolution. Your's is {width}x{height}. I can see what I can do if you can send a screenshot of the Trading Post (with some items visible) to me on Discord. Thank you, and sorry.",
+                    "Error");
+                return null;
+            }
 
             var bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
             using var graphics = Graphics.FromImage(bmp);
@@ -133,6 +153,7 @@ namespace TradingPostDataExtractor
         {
             using var imageParser = new ImageParser();
             var result = imageParser.Parse(ToImageSharp(image));
+            _rawPrices.AddRange(result);
             result.ForEach(r =>
             {
                 if (PriceDataParser.TryParse(r, out var priceData))
@@ -192,64 +213,78 @@ namespace TradingPostDataExtractor
             if (!string.IsNullOrEmpty(fileName))
             {
                 File.WriteAllText(fileName,JsonConvert.SerializeObject(_prices,Formatting.Indented),Encoding.UTF8);
+
+                var debugInfo = new DebugInfo
+                {
+                    NewWorldGameWindowDimensions = _newWorldGameWindowDimensions,
+                    RawPriceData = _rawPrices,
+                    InvalidPriceData = _invalidPrices
+                };
+
+                File.WriteAllText($"DebugInfo-{DateTime.UtcNow:yyyyMMddHHmmss}.json", JsonConvert.SerializeObject(debugInfo, Formatting.Indented));
                 _prices = new List<PriceData>();
+                _rawPrices = new List<RawPriceData>();
                 _invalidPrices = new List<RawPriceData>();
             }
         }
 
-        private void SetupHotkeys()
+        private void RegisterHotKeys()
         {
-            khm.RegisterHotkey(NonInvasiveKeyboardHookLibrary.ModifierKeys.Control, 0x48, TakeScreenshot);
+            ////_khm.RegisterHotkey(NonInvasiveKeyboardHookLibrary.ModifierKeys.Control, 0x48, TakeScreenshot);
+            _keyboardHooks.Start();
+            //_keyboardHooks.RegisterHotkey(0, 0x7B, TakeScreenshot);
+            _keyboardHooks.RegisterHotkey(0, 0x7A, TakeScreenshot);
         }
+
+
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            khm.UnregisterAll();
-            khm.Stop();
             Environment.Exit(0);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            LoadWindowState(this);
+            RegisterHotKeys();
+            LoadConfiguration(this);
         }
 
-        private const string WindowStateFile = "windowstate.json";
+        private const string ConfigurationFile = "config.json";
 
-        public static void SaveWindowState(Form form)
+        public static void SaveConfiguration(Form form)
         {
-            var state = new WindowStateInfo
+            var configuration = new Configuration
             {
                 WindowLocation = form.Location,
                 WindowState = form.WindowState
             };
 
-            File.WriteAllText(WindowStateFile, JsonConvert.SerializeObject(state));
+            File.WriteAllText(ConfigurationFile, JsonConvert.SerializeObject(configuration));
         }
 
-        public static void LoadWindowState(Form form)
+        public static void LoadConfiguration(Form form)
         {
-            if (!File.Exists(WindowStateFile))
+            if (!File.Exists(ConfigurationFile))
             {
                 return;
             }
 
-            var state = JsonConvert.DeserializeObject<WindowStateInfo>(File.ReadAllText(WindowStateFile));
-            if (state != null)
+            var configuration = JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(ConfigurationFile));
+            if (configuration != null)
             {
-                if (state.WindowState.HasValue)
+                if (configuration.WindowState.HasValue)
                 {
-                    form.WindowState = state.WindowState.Value;
+                    form.WindowState = configuration.WindowState.Value;
                 }
 
-                if (state.WindowLocation.HasValue)
+                if (configuration.WindowLocation.HasValue)
                 {
-                    form.Location = state.WindowLocation.Value;
+                    form.Location = configuration.WindowLocation.Value;
                 }
             }
         }
 
-        public class WindowStateInfo
+        public class Configuration
         {
             public FormWindowState? WindowState { get; set; }
 
@@ -258,7 +293,13 @@ namespace TradingPostDataExtractor
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            SaveWindowState(this);
+            SaveConfiguration(this);
+            _keyboardHooks?.UnregisterAll();
+            _keyboardHooks?.Stop();
+        }
+
+        private void MainForm_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
         }
     }
 }
