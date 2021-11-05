@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using TradingPostDataExtractor.PerformanceProfiling;
 
 namespace TradingPostDataExtractor
 {
@@ -6,10 +7,12 @@ namespace TradingPostDataExtractor
     {
         public bool TryParse(RawPriceData rawPriceData, out PriceData priceData)
         {
+            PerformanceProfiler.Current?.Start("PriceDataParser.Parse");
             if (string.IsNullOrWhiteSpace(rawPriceData.ItemName) || string.IsNullOrWhiteSpace(rawPriceData.Availability) ||
                 string.IsNullOrWhiteSpace(rawPriceData.Price))
             {
                 priceData = null;
+                PerformanceProfiler.Current?.Stop("PriceDataParser.Parse");
                 return false;
             }
 
@@ -20,17 +23,22 @@ namespace TradingPostDataExtractor
             if (!decimal.TryParse(priceStr, out var price))
             {
                 priceData = null;
+                PerformanceProfiler.Current?.Stop("PriceDataParser.Parse");
                 return false;
             }
 
             if (!int.TryParse(rawPriceData.Availability.Trim(), out var availability))
             {
                 priceData = null;
+                PerformanceProfiler.Current?.Stop("PriceDataParser.Parse");
                 return false;
             }
 
-            priceData = new PriceData {ItemName = rawPriceData.ItemName, Price = price, Availability = availability};
+            var name = ItemNameFixer.GetFixedName(rawPriceData.ItemName);
 
+            priceData = new PriceData {ItemName = name, Price = price, Availability = availability};
+
+            PerformanceProfiler.Current?.Stop("PriceDataParser.Parse");
             return true;
         }
     }

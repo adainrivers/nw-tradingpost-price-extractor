@@ -14,7 +14,11 @@ namespace TradingPostDataExtractor
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            ItemNameFixer.Initialize();
+
             Application.Run(new MainForm());
         }
+
     }
 }

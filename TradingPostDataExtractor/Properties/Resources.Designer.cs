@@ -59,5 +59,15 @@ namespace TradingPostDataExtractor.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] item_names {
+            get {
+                object obj = ResourceManager.GetObject("item_names", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

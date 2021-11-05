@@ -6,15 +6,20 @@
     <UseWindowsForms>true</UseWindowsForms>
     <SignAssembly>false</SignAssembly>
     <DelaySign>false</DelaySign>
-    <Version>0.0.2</Version>
+    <Version>0.1.0</Version>
     <Authors>Adain Rivers</Authors>
     <Company>gaming.tools</Company>
     <Copyright>https://github.com/adainrivers/nw-tradingpost-price-extractor</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="item-names.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta13" />
     <PackageReference Include="TesserNet.ImageSharp" Version="0.5.1" />
   </ItemGroup>
 
@@ -31,6 +36,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="languages\" />
   </ItemGroup>
 
 </Project>

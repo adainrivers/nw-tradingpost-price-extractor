@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace NonInvasiveKeyboardHookLibrary
 {
@@ -30,7 +31,7 @@ namespace NonInvasiveKeyboardHookLibrary
         /// <summary>
         /// Keeps track of all registered hotkeys
         /// </summary>
-        private readonly Dictionary<KeybindStruct, Action> _registeredCallbacks;
+        private readonly Dictionary<KeybindStruct, Func<Task>> _registeredCallbacks;
         /// <summary>
         /// Keeps track of modifier keys that are held down
         /// </summary>
@@ -54,7 +55,7 @@ namespace NonInvasiveKeyboardHookLibrary
         public KeyboardHookManager()
         {
             var comparer = new KeybindStructComparer();
-            _registeredCallbacks = new Dictionary<KeybindStruct, Action>(comparer);
+            _registeredCallbacks = new Dictionary<KeybindStruct, Func<Task>>(comparer);
             _downModifierKeys = new HashSet<ModifierKeys>();
             _downKeys = new HashSet<int>();
         }
@@ -94,7 +95,7 @@ namespace NonInvasiveKeyboardHookLibrary
         /// <param name="action">The callback action to invoke when this hotkey is pressed</param>
         /// <exception cref="HotkeyAlreadyRegisteredException">Thrown when the given key is already mapped to a callback</exception>
         /// /// <returns>Unique identifier of this hotkey, which can be used to remove it later</returns>
-        public Guid RegisterHotkey(int virtualKeyCode, Action action)
+        public Guid RegisterHotkey(int virtualKeyCode, Func<Task> action)
         {
             return RegisterHotkey(new ModifierKeys[0], virtualKeyCode, action);
         }
@@ -107,7 +108,7 @@ namespace NonInvasiveKeyboardHookLibrary
         /// <param name="action">The callback action to invoke when this combination is pressed</param>
         /// <exception cref="HotkeyAlreadyRegisteredException">Thrown when the given key combination is already mapped to a callback</exception>
         /// <returns>Unique identifier of this hotkey, which can be used to remove it later</returns>
-        public Guid RegisterHotkey(ModifierKeys modifiers, int virtualKeyCode, Action action)
+        public Guid RegisterHotkey(ModifierKeys modifiers, int virtualKeyCode, Func<Task> action)
         {
             var allModifiers = Enum.GetValues(typeof(ModifierKeys)).Cast<ModifierKeys>().ToArray();
 
@@ -125,7 +126,7 @@ namespace NonInvasiveKeyboardHookLibrary
         /// <param name="action">The callback action to invoke when this combination is pressed</param>
         /// <exception cref="HotkeyAlreadyRegisteredException">Thrown when the given key combination is already mapped to a callback</exception>
         /// <returns>Unique identifier of this hotkey, which can be used to remove it later</returns>
-        public Guid RegisterHotkey(ModifierKeys[] modifiers, int virtualKeyCode, Action action)
+        public Guid RegisterHotkey(ModifierKeys[] modifiers, int virtualKeyCode, Func<Task> action)
         {
             var keybindIdentity = Guid.NewGuid();
             var keybind = new KeybindStruct(modifiers, virtualKeyCode, keybindIdentity);
@@ -189,13 +190,13 @@ namespace NonInvasiveKeyboardHookLibrary
         #endregion
 
         #region Private methods
-        private void HandleKeyPress(int virtualKeyCode)
+        private async Task HandleKeyPress(int virtualKeyCode)
         {
             var currentKey = new KeybindStruct(_downModifierKeys, virtualKeyCode);
 
             if (_registeredCallbacks.TryGetValue(currentKey, out var callback))
             {
-                callback.Invoke();
+                await callback();
             }
         }
         #endregion
@@ -226,7 +227,7 @@ namespace NonInvasiveKeyboardHookLibrary
 
                 // Debug.WriteLine("Starting");
                 // To prevent slowing keyboard input down, we use handle keyboard inputs in a separate thread
-                ThreadPool.QueueUserWorkItem(HandleSingleKeyboardInput, new KeyboardParams(wParam, vkCode));
+                HandleSingleKeyboardInput(new KeyboardParams(wParam, vkCode));
                 // Debug.WriteLine("Ending");
             }
 
@@ -238,7 +239,7 @@ namespace NonInvasiveKeyboardHookLibrary
         /// Handles a keyboard event based on the KeyboardParams it receives
         /// </summary>
         /// <param name="keyboardParamsObj">KeyboardParams struct (object type to comply with QueueUserWorkItem)</param>
-        private void HandleSingleKeyboardInput(object keyboardParamsObj)
+        private async Task HandleSingleKeyboardInput(object keyboardParamsObj)
         {
             var keyboardParams = (KeyboardParams)keyboardParamsObj;
             var wParam = keyboardParams.wParam;
@@ -268,7 +269,7 @@ namespace NonInvasiveKeyboardHookLibrary
             // If the keyboard event is a KeyUp event (i.e. key released)
             if (wParam == (IntPtr)WM_KEYUP || wParam == (IntPtr)WM_SYSKEYUP)
             {
-                HandleKeyPress(vkCode);
+                await HandleKeyPress(vkCode);
                 // If the released key is a modifier key, remove it from the HashSet of modifier keys
                 if (modifierKey != null)
                 {

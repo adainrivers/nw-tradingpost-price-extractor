@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -7,12 +8,11 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using NonInvasiveKeyboardHookLibrary;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Bmp;
-using SixLabors.ImageSharp.PixelFormats;
+using TradingPostDataExtractor.PerformanceProfiling;
 using Color = System.Drawing.Color;
 using Image = System.Drawing.Image;
 using Point = System.Drawing.Point;
@@ -25,13 +25,16 @@ namespace TradingPostDataExtractor
         private const string NewWorldRunning = "Running";
         private const string NewWorldNotRunning = "Not Running";
 
-        private static readonly BmpDecoder BmpDecoder = new ();
         private List<PriceData> _prices = new();
         private List<RawPriceData> _invalidPrices = new();
         private List<RawPriceData> _rawPrices = new();
+
+        private List<PriceData> _currentScreenshotPrices = new();
+        private List<RawPriceData> _currentScreenshotRawPrices = new();
         private static readonly RawPriceDataParser PriceDataParser = new();
 
         private string _newWorldGameWindowDimensions;
+
 
         private readonly KeyboardHookManager _keyboardHooks = new();
 
@@ -72,30 +75,30 @@ namespace TradingPostDataExtractor
             TotalItems.Text = _prices.Sum(p => p.Availability).ToString();
         }
 
-        private void OnTakeScreenshotButton_Click(object sender, EventArgs e)
+        private async void OnTakeScreenshotButton_Click(object sender, EventArgs e)
         {
-            TakeScreenshot();
+            await TakeScreenshot();
         }
 
-        private void TakeScreenshot()
+        private async Task TakeScreenshot()
         {
-            SafeInvoke(() =>
+            _keyboardHooks.Stop();
+            var currentText = TakeScreenshotButton.Text;
+            TakeScreenshotButton.Text = "Processing";
+            TakeScreenshotButton.Enabled = false;
+
+            using var capturedImage = CaptureApplication();
+            if (capturedImage == null)
             {
-                _keyboardHooks.Stop();
-                var currentText = TakeScreenshotButton.Text;
-                TakeScreenshotButton.Text = "Processing";
-                TakeScreenshotButton.Enabled = false;
-                using var capturedImage = CaptureApplication();
-                if (capturedImage == null)
-                {
-                    return;
-                }
-                SetPreviewImage(capturedImage);
-                ParseImage(capturedImage);
-                TakeScreenshotButton.Text = currentText;
-                TakeScreenshotButton.Enabled = true;
-                _keyboardHooks.Start();
-            });
+                return;
+            }
+            await ProcessImage(capturedImage);
+
+            RawResults.DataSource = _currentScreenshotRawPrices;
+            ParsedResults.DataSource = _currentScreenshotPrices;
+            TakeScreenshotButton.Text = currentText;
+            TakeScreenshotButton.Enabled = true;
+            _keyboardHooks.Start();
         }
 
         private Image CaptureApplication()
@@ -109,14 +112,6 @@ namespace TradingPostDataExtractor
 
             _newWorldGameWindowDimensions = $"{width}x{height}";
 
-            if (width != 1920 && height != 1080)
-            {
-                MessageBox.Show(
-                    $"This application only works if New World is running in Full-Screen mode at 1920x1080 resolution. Your's is {width}x{height}. I can see what I can do if you can send a screenshot of the Trading Post (with some items visible) to me on Discord. Thank you, and sorry.",
-                    "Error");
-                return null;
-            }
-
             var bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
             using var graphics = Graphics.FromImage(bmp);
             graphics.CopyFromScreen(rect.left, rect.top, 0, 0, new Size(width, height), CopyPixelOperation.SourceCopy);
@@ -129,8 +124,9 @@ namespace TradingPostDataExtractor
             {
                 Invoke(act);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException e)
             {
+                StatusBarLabel1.Text = e.Message;
             }
         }
 
@@ -149,44 +145,40 @@ namespace TradingPostDataExtractor
             public static extern IntPtr GetWindowRect(IntPtr hWnd, ref Rect rect);
         }
 
-        private void ParseImage(Image image)
+        private async Task ParseImage(Image image)
         {
-            using var imageParser = new ImageParser();
-            var result = imageParser.Parse(ToImageSharp(image));
-            _rawPrices.AddRange(result);
-            result.ForEach(r =>
+            try
             {
-                if (PriceDataParser.TryParse(r, out var priceData))
+                using var imageParser = new ImageParser();
+                var result = await imageParser.Parse(GetLanguageCode(LanguageDropdown.Text), image);
+                ImagePreview.ImageLocation = imageParser.DebugFilePath;
+                _rawPrices.AddRange(result);
+
+                var parsedPrices = new List<PriceData>();
+                var invalidPrices = new List<RawPriceData>();
+                result.ForEach(r =>
                 {
-                    _prices.Add(priceData);
-                }
-                else
-                {
-                    _invalidPrices.Add(r);
-                }
-            });
+                    if (PriceDataParser.TryParse(r, out var priceData))
+                    {
+                        parsedPrices.Add(priceData);
+                    }
+                    else
+                    {
+                        invalidPrices.Add(r);
+                    }
+                });
 
-        }
+                _currentScreenshotPrices = parsedPrices.ToList();
+                _currentScreenshotRawPrices = result.ToList();
 
-        private void SetPreviewImage(Image image)
-        {
-            Image clonedImg = new Bitmap(image.Width, image.Height, PixelFormat.Format32bppArgb);
-            using var copy = Graphics.FromImage(clonedImg);
-            copy.DrawImage(image, 0, 0);
-            ImagePreview.Image = clonedImg;
-        }
-
-        public static Image<Rgba32> ToImageSharp(Image bmp)
-        {
-            if (bmp is null)
+                _invalidPrices.AddRange(invalidPrices);
+                _prices.AddRange(parsedPrices);
+            }
+            catch (Exception e)
             {
-                throw new ArgumentNullException(nameof(bmp));
+                StatusBarLabel1.Text = e.Message;
             }
 
-            using var ms = new MemoryStream();
-            bmp.Save(ms, ImageFormat.Bmp);
-            ms.Position = 0;
-            return SixLabors.ImageSharp.Image.Load<Rgba32>(ms, BmpDecoder);
         }
 
         private void TimerNewWorldStatus_Tick(object sender, EventArgs e)
@@ -203,7 +195,7 @@ namespace TradingPostDataExtractor
         {
             var saveFileDialog1 = new SaveFileDialog
             {
-                Filter = "Json File|*.json", 
+                Filter = "Json File|*.json",
                 Title = "Export Prices"
             };
             saveFileDialog1.ShowDialog();
@@ -212,7 +204,7 @@ namespace TradingPostDataExtractor
             var fileName = saveFileDialog1.FileName;
             if (!string.IsNullOrEmpty(fileName))
             {
-                File.WriteAllText(fileName,JsonConvert.SerializeObject(_prices,Formatting.Indented),Encoding.UTF8);
+                File.WriteAllText(fileName, JsonConvert.SerializeObject(_prices, Formatting.Indented), Encoding.UTF8);
 
                 var debugInfo = new DebugInfo
                 {
@@ -221,7 +213,9 @@ namespace TradingPostDataExtractor
                     InvalidPriceData = _invalidPrices
                 };
 
-                File.WriteAllText($"DebugInfo-{DateTime.UtcNow:yyyyMMddHHmmss}.json", JsonConvert.SerializeObject(debugInfo, Formatting.Indented));
+                var debugFilePath = Path.Combine(Constants.DebugFolder,
+                    $"DebugInfo-{DateTime.UtcNow:yyyyMMddHHmmss}.json");
+                File.WriteAllText(debugFilePath, JsonConvert.SerializeObject(debugInfo, Formatting.Indented));
                 _prices = new List<PriceData>();
                 _rawPrices = new List<RawPriceData>();
                 _invalidPrices = new List<RawPriceData>();
@@ -246,23 +240,29 @@ namespace TradingPostDataExtractor
         private void MainForm_Load(object sender, EventArgs e)
         {
             RegisterHotKeys();
-            LoadConfiguration(this);
+            LoadConfiguration();
+
+            if (!Directory.Exists(Constants.DebugFolder))
+            {
+                Directory.CreateDirectory(Constants.DebugFolder);
+            }
         }
 
         private const string ConfigurationFile = "config.json";
 
-        public static void SaveConfiguration(Form form)
+        public void SaveConfiguration()
         {
             var configuration = new Configuration
             {
-                WindowLocation = form.Location,
-                WindowState = form.WindowState
+                WindowLocation = Location,
+                WindowState = WindowState,
+                GameUILanguage = LanguageDropdown.Text
             };
 
             File.WriteAllText(ConfigurationFile, JsonConvert.SerializeObject(configuration));
         }
 
-        public static void LoadConfiguration(Form form)
+        public void LoadConfiguration()
         {
             if (!File.Exists(ConfigurationFile))
             {
@@ -274,12 +274,21 @@ namespace TradingPostDataExtractor
             {
                 if (configuration.WindowState.HasValue)
                 {
-                    form.WindowState = configuration.WindowState.Value;
+                    WindowState = configuration.WindowState.Value;
                 }
 
                 if (configuration.WindowLocation.HasValue)
                 {
-                    form.Location = configuration.WindowLocation.Value;
+                    Location = configuration.WindowLocation.Value;
+                }
+
+                if (!string.IsNullOrWhiteSpace(configuration.GameUILanguage))
+                {
+                    LanguageDropdown.Text = configuration.GameUILanguage;
+                }
+                else
+                {
+                    LanguageDropdown.Text = "English";
                 }
             }
         }
@@ -289,17 +298,72 @@ namespace TradingPostDataExtractor
             public FormWindowState? WindowState { get; set; }
 
             public Point? WindowLocation { get; set; }
+
+            public string GameUILanguage { get; set; } = "English";
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            SaveConfiguration(this);
+            SaveConfiguration();
             _keyboardHooks?.UnregisterAll();
             _keyboardHooks?.Stop();
         }
 
         private void MainForm_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
         {
+        }
+
+        private async void FromImageButton_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                using var image = Image.FromFile(openFileDialog1.FileName);
+                await ProcessImage(image);
+                RawResults.DataSource = _currentScreenshotRawPrices;
+                ParsedResults.DataSource = _currentScreenshotPrices;
+            }
+        }
+
+        private async Task ProcessImage(Image image)
+        {
+            StatusBarLabel1.Text = $"Processing...";
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            await ParseImage(image);
+            //SetPreviewImage(image);
+            StatusBarLabel1.Text = $"Processed in {stopwatch.ElapsedMilliseconds} ms.";
+            PerformanceGrid.DataSource = PerformanceProfiler.Current.GetProfiles().Select(pp =>
+                new { Profile = pp.Key, TotalMS = Math.Round(pp.Value.TotalMilliseconds * 100) / 100, AverageMS = Math.Round(pp.Value.AverageMilliseconds * 100) / 100, pp.Value.ExecutionsCount }).OrderByDescending(a=>a.TotalMS) .ToList();
+
+            PerformanceProfiler.Current = new PerformanceProfiler();
+        }
+
+        private void LanguageDropdown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private string GetLanguageCode(string languageName)
+        {
+            switch (languageName)
+            {
+                case "English":
+                    return "eng";
+                case "French":
+                    return "fra";
+                case "Spanish":
+                    return "spa";
+                case "German":
+                    return "deu";
+                case "Italian":
+                    return "ita";
+                case "Polish":
+                    return "pol";
+                case "Portuguese":
+                    return "por";
+                default:
+                    return "eng";
+            }
         }
     }
 }
