@@ -38,6 +38,7 @@ namespace TradingPostDataExtractor
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.ImagePreview = new System.Windows.Forms.PictureBox();
+            this.PerformanceLabel = new System.Windows.Forms.Label();
             this.PerformanceGrid = new System.Windows.Forms.DataGridView();
             this.label6 = new System.Windows.Forms.Label();
             this.LanguageDropdown = new System.Windows.Forms.ComboBox();
@@ -56,7 +57,6 @@ namespace TradingPostDataExtractor
             this.NewWorldStatus = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.TakeScreenshotButton = new System.Windows.Forms.Button();
-            this.label7 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -106,7 +106,7 @@ namespace TradingPostDataExtractor
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.label7);
+            this.splitContainer1.Panel2.Controls.Add(this.PerformanceLabel);
             this.splitContainer1.Panel2.Controls.Add(this.PerformanceGrid);
             this.splitContainer1.Panel2.Controls.Add(this.label6);
             this.splitContainer1.Panel2.Controls.Add(this.LanguageDropdown);
@@ -139,6 +139,17 @@ namespace TradingPostDataExtractor
             this.ImagePreview.TabIndex = 2;
             this.ImagePreview.TabStop = false;
             // 
+            // PerformanceLabel
+            // 
+            this.PerformanceLabel.AutoSize = true;
+            this.PerformanceLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.PerformanceLabel.Location = new System.Drawing.Point(14, 619);
+            this.PerformanceLabel.Name = "PerformanceLabel";
+            this.PerformanceLabel.Size = new System.Drawing.Size(80, 15);
+            this.PerformanceLabel.TabIndex = 29;
+            this.PerformanceLabel.Text = "Performance";
+            this.PerformanceLabel.Visible = false;
+            // 
             // PerformanceGrid
             // 
             this.PerformanceGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -148,6 +159,7 @@ namespace TradingPostDataExtractor
             this.PerformanceGrid.RowTemplate.Height = 25;
             this.PerformanceGrid.Size = new System.Drawing.Size(553, 129);
             this.PerformanceGrid.TabIndex = 28;
+            this.PerformanceGrid.Visible = false;
             // 
             // label6
             // 
@@ -242,6 +254,7 @@ namespace TradingPostDataExtractor
             this.FromImageButton.TabIndex = 19;
             this.FromImageButton.Text = "From Image";
             this.FromImageButton.UseVisualStyleBackColor = true;
+            this.FromImageButton.Visible = false;
             this.FromImageButton.Click += new System.EventHandler(this.FromImageButton_Click);
             // 
             // ExportPricesButton
@@ -325,16 +338,6 @@ namespace TradingPostDataExtractor
             this.TakeScreenshotButton.UseVisualStyleBackColor = true;
             this.TakeScreenshotButton.Click += new System.EventHandler(this.OnTakeScreenshotButton_Click);
             // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label7.Location = new System.Drawing.Point(14, 619);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(80, 15);
-            this.label7.TabIndex = 29;
-            this.label7.Text = "Performance";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -389,7 +392,7 @@ namespace TradingPostDataExtractor
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox LanguageDropdown;
         private System.Windows.Forms.DataGridView PerformanceGrid;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label PerformanceLabel;
     }
 }
 

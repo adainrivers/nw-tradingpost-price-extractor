@@ -239,6 +239,11 @@ namespace TradingPostDataExtractor
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+#if DEBUG
+            FromImageButton.Visible = true;
+            PerformanceGrid.Visible = true;
+            PerformanceLabel.Visible = true;
+#endif
             RegisterHotKeys();
             LoadConfiguration();
 
