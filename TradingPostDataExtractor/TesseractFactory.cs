@@ -35,7 +35,7 @@ namespace TradingPostDataExtractor
                     {
                         PageSegmentation = PageSegmentation.Line,
                         Numeric = true,
-                        Whitelist = "0123456789,."
+                        Whitelist = "0123456789"
                     });
                 }
                 else
@@ -53,7 +53,7 @@ namespace TradingPostDataExtractor
                 {
                     PageSegmentation = PageSegmentation.Line,
                     Numeric = true,
-                    Whitelist = "0123456789,.",
+                    Whitelist = "0123456789",
                     DataPath = "languages",
                     Language = language
                 });

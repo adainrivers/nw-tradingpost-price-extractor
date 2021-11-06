@@ -18,9 +18,9 @@ namespace TradingPostDataExtractor
                 return name;
             }
 
-            if (_itemNames.Contains(name))
+            if (_itemNames.TryGetValue(name, out var actualName))
             {
-                return name;
+                return actualName;
             }
 
             var smallestDistance = int.MaxValue;
@@ -47,7 +47,11 @@ namespace TradingPostDataExtractor
             }
 
             var json = System.Text.Encoding.UTF8.GetString(bytes);
-            _itemNames = JsonConvert.DeserializeObject<HashSet<string>>(json);
+            var itemNames = JsonConvert.DeserializeObject<List<string>>(json);
+            if (itemNames != null)
+            {
+                _itemNames = new HashSet<string>(itemNames, StringComparer.OrdinalIgnoreCase);
+            }
         }
 
         /// <summary>

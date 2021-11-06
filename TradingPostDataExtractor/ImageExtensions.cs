@@ -135,8 +135,7 @@ namespace TradingPostDataExtractor
                 newImage = image.CreateCrop(rect);
             }
             PerformanceProfiler.Current?.Stop("Image.AdjustSize");
-
-            return newImage;
+  return newImage;
         }
 
         public static void Negative(this Image image)

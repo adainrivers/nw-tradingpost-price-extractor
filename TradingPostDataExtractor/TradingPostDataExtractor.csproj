@@ -6,7 +6,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <SignAssembly>false</SignAssembly>
     <DelaySign>false</DelaySign>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>Adain Rivers</Authors>
     <Company>gaming.tools</Company>
     <Copyright>https://github.com/adainrivers/nw-tradingpost-price-extractor</Copyright>
