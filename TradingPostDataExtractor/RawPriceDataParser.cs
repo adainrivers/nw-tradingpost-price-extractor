@@ -19,13 +19,24 @@ namespace TradingPostDataExtractor
 
             var priceStr = rawPriceData.Price.Replace(",", string.Empty).Replace(".", "");
 
-            priceStr = $"{new string(priceStr.Take(priceStr.Length - 2).ToArray())},{new string(priceStr.Skip(priceStr.Length - 2).Take(2).ToArray())}";
-            if (!decimal.TryParse(priceStr, out var price))
+            if (priceStr == string.Empty)
             {
                 priceData = null;
                 PerformanceProfiler.Current?.Stop("PriceDataParser.Parse");
                 return false;
             }
+
+            var wholeStr = priceStr.Substring(0, priceStr.Length - 2);
+            var fractionStr = priceStr.Substring(priceStr.Length - 2, 2);
+
+            if (!int.TryParse(wholeStr, out var whole) || !int.TryParse(fractionStr, out var fraction))
+            {
+                priceData = null;
+                PerformanceProfiler.Current?.Stop("PriceDataParser.Parse");
+                return false;
+            }
+
+            var price = whole + (decimal)fraction / 100;
 
             if (!int.TryParse(rawPriceData.Availability.Trim(), out var availability))
             {
@@ -34,9 +45,16 @@ namespace TradingPostDataExtractor
                 return false;
             }
 
+            int? gearScoreResult = null;
+            if (!string.IsNullOrWhiteSpace(rawPriceData.GearScore) && int.TryParse(rawPriceData.GearScore.Trim(), out var gearScore) && gearScore >= 100)
+            {
+                gearScoreResult = gearScore;
+            }
+
+
             var name = ItemNameFixer.GetFixedName(rawPriceData.ItemName);
 
-            priceData = new PriceData {ItemName = name, Price = price, Availability = availability};
+            priceData = new PriceData { ItemName = name, Price = price, Availability = availability, GearScore = gearScoreResult };
 
             PerformanceProfiler.Current?.Stop("PriceDataParser.Parse");
             return true;

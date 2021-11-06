@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace TradingPostDataExtractor
@@ -11,6 +12,11 @@ namespace TradingPostDataExtractor
         [STAThread]
         static void Main()
         {
+            var culture = CultureInfo.GetCultureInfo("en-us");
+
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
+
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
