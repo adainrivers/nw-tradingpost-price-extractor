@@ -192,6 +192,10 @@ namespace TradingPostDataExtractor
             var finalImage = blackandwhiteImage ?? adjustedImage ?? resizedImage ?? croppedImage;
 
 #if DEBUG
+            if (!Directory.Exists("megadebug"))
+            {
+                Directory.CreateDirectory("megadebug");
+            }
             finalImage.Save(Path.Combine("megadebug", $"{rect.X}-{rect.Y}.png"), ImageFormat.Png);
 #endif
 
