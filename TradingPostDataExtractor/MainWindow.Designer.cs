@@ -125,8 +125,9 @@ namespace TradingPostDataExtractor
             this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Panel2.Controls.Add(this.TakeScreenshotButton);
             this.splitContainer1.Panel2.Padding = new System.Windows.Forms.Padding(10);
-            this.splitContainer1.Size = new System.Drawing.Size(1473, 801);
-            this.splitContainer1.SplitterDistance = 893;
+            this.splitContainer1.Panel2MinSize = 584;
+            this.splitContainer1.Size = new System.Drawing.Size(1139, 806);
+            this.splitContainer1.SplitterDistance = 550;
             this.splitContainer1.TabIndex = 11;
             // 
             // ImagePreview
@@ -134,7 +135,7 @@ namespace TradingPostDataExtractor
             this.ImagePreview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ImagePreview.Location = new System.Drawing.Point(10, 10);
             this.ImagePreview.Name = "ImagePreview";
-            this.ImagePreview.Size = new System.Drawing.Size(873, 781);
+            this.ImagePreview.Size = new System.Drawing.Size(530, 786);
             this.ImagePreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.ImagePreview.TabIndex = 2;
             this.ImagePreview.TabStop = false;
@@ -193,9 +194,9 @@ namespace TradingPostDataExtractor
             // 
             this.StatusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusBarLabel1});
-            this.StatusBar.Location = new System.Drawing.Point(10, 769);
+            this.StatusBar.Location = new System.Drawing.Point(10, 774);
             this.StatusBar.Name = "StatusBar";
-            this.StatusBar.Size = new System.Drawing.Size(556, 22);
+            this.StatusBar.Size = new System.Drawing.Size(565, 22);
             this.StatusBar.SizingGrip = false;
             this.StatusBar.TabIndex = 25;
             this.StatusBar.Text = "statusStrip1";
@@ -342,7 +343,7 @@ namespace TradingPostDataExtractor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1473, 801);
+            this.ClientSize = new System.Drawing.Size(1139, 806);
             this.Controls.Add(this.splitContainer1);
             this.MaximizeBox = false;
             this.Name = "MainForm";
@@ -350,6 +351,7 @@ namespace TradingPostDataExtractor
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.ResizeEnd += new System.EventHandler(this.MainForm_ResizeEnd);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();

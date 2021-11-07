@@ -261,9 +261,10 @@ namespace TradingPostDataExtractor
             {
                 WindowLocation = Location,
                 WindowState = WindowState,
-                GameUILanguage = LanguageDropdown.Text
+                GameUILanguage = LanguageDropdown.Text,
+                Size = Size
+                
             };
-
             File.WriteAllText(ConfigurationFile, JsonConvert.SerializeObject(configuration));
         }
 
@@ -287,6 +288,11 @@ namespace TradingPostDataExtractor
                     Location = configuration.WindowLocation.Value;
                 }
 
+                if (configuration.Size.HasValue)
+                {
+                    Size = configuration.Size.Value;
+                }
+
                 if (!string.IsNullOrWhiteSpace(configuration.GameUILanguage))
                 {
                     LanguageDropdown.Text = configuration.GameUILanguage;
@@ -305,6 +311,7 @@ namespace TradingPostDataExtractor
             public Point? WindowLocation { get; set; }
 
             public string GameUILanguage { get; set; } = "English";
+            public Size? Size { get; set; }
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -369,6 +376,11 @@ namespace TradingPostDataExtractor
                 default:
                     return "eng";
             }
+        }
+
+        private void MainForm_ResizeEnd(object sender, EventArgs e)
+        {
+            splitContainer1.SplitterDistance = splitContainer1.Width - splitContainer1.Panel2.MinimumSize.Width;
         }
     }
 }
