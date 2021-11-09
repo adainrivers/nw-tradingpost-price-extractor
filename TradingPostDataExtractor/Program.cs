@@ -21,7 +21,8 @@ namespace TradingPostDataExtractor
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            ItemNameFixer.Initialize();
+            ItemFinder.Initialize();
+            Servers.Initialize();
 
             Application.Run(new MainForm());
         }

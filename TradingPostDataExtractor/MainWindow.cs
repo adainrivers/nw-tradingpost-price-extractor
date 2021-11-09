@@ -6,12 +6,14 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
-using NonInvasiveKeyboardHookLibrary;
+using TradingPostDataExtractor.Models;
+using TradingPostDataExtractor.NonInvasiveKeyboardHookLibrary;
 using TradingPostDataExtractor.PerformanceProfiling;
 using Color = System.Drawing.Color;
 using Image = System.Drawing.Image;
@@ -93,9 +95,12 @@ namespace TradingPostDataExtractor
                 return;
             }
             await ProcessImage(capturedImage);
+            if (!HighPerformanceMode.Checked)
+            {
+                RawResults.DataSource = _currentScreenshotRawPrices;
+                ParsedResults.DataSource = _currentScreenshotPrices;
+            }
 
-            RawResults.DataSource = _currentScreenshotRawPrices;
-            ParsedResults.DataSource = _currentScreenshotPrices;
             TakeScreenshotButton.Text = currentText;
             TakeScreenshotButton.Enabled = true;
             _keyboardHooks.Start();
@@ -149,9 +154,13 @@ namespace TradingPostDataExtractor
         {
             try
             {
-                using var imageParser = new ImageParser();
+                using var imageParser = new ImageParser(HighPerformanceMode.Checked);
                 var result = await imageParser.Parse(GetLanguageCode(LanguageDropdown.Text), image);
-                ImagePreview.ImageLocation = imageParser.DebugFilePath;
+                if (!HighPerformanceMode.Checked)
+                {
+                    ImagePreview.ImageLocation = ImageParser.DebugFilePath;
+                }
+
                 _rawPrices.AddRange(result);
 
                 var parsedPrices = new List<PriceData>();
@@ -191,7 +200,7 @@ namespace TradingPostDataExtractor
             SetNewWorldProcess();
         }
 
-        private void ExportPricesButton_Click(object sender, EventArgs e)
+        private async void ExportPricesButton_Click(object sender, EventArgs e)
         {
             var saveFileDialog1 = new SaveFileDialog
             {
@@ -204,7 +213,8 @@ namespace TradingPostDataExtractor
             var fileName = saveFileDialog1.FileName;
             if (!string.IsNullOrEmpty(fileName))
             {
-                File.WriteAllText(fileName, JsonConvert.SerializeObject(_prices, Formatting.Indented), Encoding.UTF8);
+                var json = JsonConvert.SerializeObject(_prices, Formatting.Indented);
+                await File.WriteAllTextAsync(fileName, json, Encoding.UTF8);
 
                 var debugInfo = new DebugInfo
                 {
@@ -215,10 +225,20 @@ namespace TradingPostDataExtractor
 
                 var debugFilePath = Path.Combine(Constants.DebugFolder,
                     $"DebugInfo-{DateTime.UtcNow:yyyyMMddHHmmss}.json");
-                File.WriteAllText(debugFilePath, JsonConvert.SerializeObject(debugInfo, Formatting.Indented));
+                await File.WriteAllTextAsync(debugFilePath, JsonConvert.SerializeObject(debugInfo, Formatting.Indented));
+                if (UploadToServer.Checked)
+                {
+                    await PriceDataUploader.Upload(json, Region.Text, Server.Text);
+                }
+
                 _prices = new List<PriceData>();
                 _rawPrices = new List<RawPriceData>();
                 _invalidPrices = new List<RawPriceData>();
+                ImagePreview.Image = null;
+                RawResults.DataSource = null;
+                ParsedResults.DataSource = null;
+                PerformanceGrid.DataSource = null;
+                StatusBarLabel1.Text = $"Saved to {fileName}";
             }
         }
 
@@ -239,13 +259,24 @@ namespace TradingPostDataExtractor
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-//#if DEBUG
             FromImageButton.Visible = true;
             PerformanceGrid.Visible = true;
             PerformanceLabel.Visible = true;
-//#endif
+
+            Region.DataSource = Servers.GetRegions();
+
             RegisterHotKeys();
             LoadConfiguration();
+
+            UpdateServersVisibility();
+
+
+            if (!string.IsNullOrWhiteSpace(Region.Text))
+            {
+                var selectedServer = Server.Text;
+                Server.DataSource = Servers.GetServers(Region.Text);
+                Server.Text = selectedServer;
+            }
 
             if (!Directory.Exists(Constants.DebugFolder))
             {
@@ -262,8 +293,11 @@ namespace TradingPostDataExtractor
                 WindowLocation = Location,
                 WindowState = WindowState,
                 GameUILanguage = LanguageDropdown.Text,
-                Size = Size
-                
+                Size = Size,
+                UploadToServer = UploadToServer.Checked,
+                Server = Server.Text,
+                Region = Region.Text
+
             };
             File.WriteAllText(ConfigurationFile, JsonConvert.SerializeObject(configuration));
         }
@@ -301,18 +335,26 @@ namespace TradingPostDataExtractor
                 {
                     LanguageDropdown.Text = "English";
                 }
+
+                if (configuration.UploadToServer.HasValue)
+                {
+                    UploadToServer.Checked = configuration.UploadToServer.Value;
+                }
+
+                if (configuration.Region != null)
+                {
+                    Region.Text = configuration.Region;
+                }
+
+                if (configuration.Server != null)
+                {
+                    Server.Text = configuration.Server;
+                }
+
             }
         }
 
-        public class Configuration
-        {
-            public FormWindowState? WindowState { get; set; }
 
-            public Point? WindowLocation { get; set; }
-
-            public string GameUILanguage { get; set; } = "English";
-            public Size? Size { get; set; }
-        }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -344,8 +386,17 @@ namespace TradingPostDataExtractor
             await ParseImage(image);
             //SetPreviewImage(image);
             StatusBarLabel1.Text = $"Processed in {stopwatch.ElapsedMilliseconds} ms.";
-            PerformanceGrid.DataSource = PerformanceProfiler.Current.GetProfiles().Select(pp =>
-                new { Profile = pp.Key, TotalMS = Math.Round(pp.Value.TotalMilliseconds * 100) / 100, AverageMS = Math.Round(pp.Value.AverageMilliseconds * 100) / 100, pp.Value.ExecutionsCount }).OrderByDescending(a=>a.TotalMS) .ToList();
+            if (!HighPerformanceMode.Checked)
+            {
+                PerformanceGrid.DataSource = PerformanceProfiler.Current.GetProfiles().Select(pp =>
+                    new
+                    {
+                        Profile = pp.Key,
+                        TotalMS = Math.Round(pp.Value.TotalMilliseconds * 100) / 100,
+                        AverageMS = Math.Round(pp.Value.AverageMilliseconds * 100) / 100,
+                        pp.Value.ExecutionsCount
+                    }).OrderByDescending(a => a.TotalMS).ToList();
+            }
 
             PerformanceProfiler.Current = new PerformanceProfiler();
         }
@@ -382,5 +433,51 @@ namespace TradingPostDataExtractor
         {
             splitContainer1.SplitterDistance = splitContainer1.Width - splitContainer1.Panel2.MinimumSize.Width;
         }
+
+        private void HighPerformanceMode_CheckedChanged(object sender, EventArgs e)
+        {
+            ImagePreview.Visible = !HighPerformanceMode.Checked;
+            RawResultsLabel.Visible = !HighPerformanceMode.Checked;
+            RawResults.Visible = !HighPerformanceMode.Checked;
+            ParsedResults.Visible = !HighPerformanceMode.Checked;
+            ParsedResultsLabel.Visible = !HighPerformanceMode.Checked;
+            PerformanceLabel.Visible = !HighPerformanceMode.Checked;
+            PerformanceGrid.Visible = !HighPerformanceMode.Checked;
+        }
+
+        private void UploadToServer_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateServersVisibility();
+        }
+
+        private void UpdateServersVisibility()
+        {
+            Region.Visible = UploadToServer.Checked;
+            Server.Visible = UploadToServer.Checked;
+            RegionLabel.Visible = UploadToServer.Checked;
+            ServerLabel.Visible = UploadToServer.Checked;
+        }
+
+        private void Region_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var serverText = Server.Text;
+            Server.DataSource = Servers.GetServers(Region.Text);
+            Server.Text = serverText;
+        }
+    }
+
+    public class Configuration
+    {
+        public FormWindowState? WindowState { get; set; }
+
+        public Point? WindowLocation { get; set; }
+
+        public string GameUILanguage { get; set; } = "English";
+        public Size? Size { get; set; }
+
+        public bool? UploadToServer { get; set; }
+        public string Region { get; set; }
+        public string Server { get; set; }
+
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NonInvasiveKeyboardHookLibrary
+namespace TradingPostDataExtractor.NonInvasiveKeyboardHookLibrary
 {
     [Flags]
     public enum ModifierKeys

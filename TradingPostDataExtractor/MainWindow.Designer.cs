@@ -38,15 +38,21 @@ namespace TradingPostDataExtractor
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.ImagePreview = new System.Windows.Forms.PictureBox();
+            this.ServerLabel = new System.Windows.Forms.Label();
+            this.Server = new System.Windows.Forms.ComboBox();
+            this.RegionLabel = new System.Windows.Forms.Label();
+            this.Region = new System.Windows.Forms.ComboBox();
+            this.UploadToServer = new System.Windows.Forms.CheckBox();
+            this.HighPerformanceMode = new System.Windows.Forms.CheckBox();
             this.PerformanceLabel = new System.Windows.Forms.Label();
             this.PerformanceGrid = new System.Windows.Forms.DataGridView();
             this.label6 = new System.Windows.Forms.Label();
             this.LanguageDropdown = new System.Windows.Forms.ComboBox();
             this.StatusBar = new System.Windows.Forms.StatusStrip();
             this.StatusBarLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.label5 = new System.Windows.Forms.Label();
+            this.ParsedResultsLabel = new System.Windows.Forms.Label();
             this.ParsedResults = new System.Windows.Forms.DataGridView();
-            this.label3 = new System.Windows.Forms.Label();
+            this.RawResultsLabel = new System.Windows.Forms.Label();
             this.RawResults = new System.Windows.Forms.DataGridView();
             this.FromImageButton = new System.Windows.Forms.Button();
             this.ExportPricesButton = new System.Windows.Forms.Button();
@@ -106,14 +112,20 @@ namespace TradingPostDataExtractor
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.ServerLabel);
+            this.splitContainer1.Panel2.Controls.Add(this.Server);
+            this.splitContainer1.Panel2.Controls.Add(this.RegionLabel);
+            this.splitContainer1.Panel2.Controls.Add(this.Region);
+            this.splitContainer1.Panel2.Controls.Add(this.UploadToServer);
+            this.splitContainer1.Panel2.Controls.Add(this.HighPerformanceMode);
             this.splitContainer1.Panel2.Controls.Add(this.PerformanceLabel);
             this.splitContainer1.Panel2.Controls.Add(this.PerformanceGrid);
             this.splitContainer1.Panel2.Controls.Add(this.label6);
             this.splitContainer1.Panel2.Controls.Add(this.LanguageDropdown);
             this.splitContainer1.Panel2.Controls.Add(this.StatusBar);
-            this.splitContainer1.Panel2.Controls.Add(this.label5);
+            this.splitContainer1.Panel2.Controls.Add(this.ParsedResultsLabel);
             this.splitContainer1.Panel2.Controls.Add(this.ParsedResults);
-            this.splitContainer1.Panel2.Controls.Add(this.label3);
+            this.splitContainer1.Panel2.Controls.Add(this.RawResultsLabel);
             this.splitContainer1.Panel2.Controls.Add(this.RawResults);
             this.splitContainer1.Panel2.Controls.Add(this.FromImageButton);
             this.splitContainer1.Panel2.Controls.Add(this.ExportPricesButton);
@@ -139,6 +151,83 @@ namespace TradingPostDataExtractor
             this.ImagePreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.ImagePreview.TabIndex = 2;
             this.ImagePreview.TabStop = false;
+            // 
+            // ServerLabel
+            // 
+            this.ServerLabel.AutoSize = true;
+            this.ServerLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.ServerLabel.Location = new System.Drawing.Point(14, 169);
+            this.ServerLabel.Name = "ServerLabel";
+            this.ServerLabel.Size = new System.Drawing.Size(45, 15);
+            this.ServerLabel.TabIndex = 35;
+            this.ServerLabel.Text = "Server";
+            // 
+            // Server
+            // 
+            this.Server.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.Server.FormattingEnabled = true;
+            this.Server.Items.AddRange(new object[] {
+            "English",
+            "French",
+            "Spanish",
+            "German",
+            "Italian",
+            "Polish",
+            "Portuguese"});
+            this.Server.Location = new System.Drawing.Point(152, 166);
+            this.Server.Name = "Server";
+            this.Server.Size = new System.Drawing.Size(121, 23);
+            this.Server.TabIndex = 34;
+            // 
+            // RegionLabel
+            // 
+            this.RegionLabel.AutoSize = true;
+            this.RegionLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.RegionLabel.Location = new System.Drawing.Point(14, 141);
+            this.RegionLabel.Name = "RegionLabel";
+            this.RegionLabel.Size = new System.Drawing.Size(46, 15);
+            this.RegionLabel.TabIndex = 33;
+            this.RegionLabel.Text = "Region";
+            // 
+            // Region
+            // 
+            this.Region.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.Region.FormattingEnabled = true;
+            this.Region.Items.AddRange(new object[] {
+            "English",
+            "French",
+            "Spanish",
+            "German",
+            "Italian",
+            "Polish",
+            "Portuguese"});
+            this.Region.Location = new System.Drawing.Point(152, 138);
+            this.Region.Name = "Region";
+            this.Region.Size = new System.Drawing.Size(121, 23);
+            this.Region.TabIndex = 32;
+            this.Region.SelectedIndexChanged += new System.EventHandler(this.Region_SelectedIndexChanged);
+            // 
+            // UploadToServer
+            // 
+            this.UploadToServer.AutoSize = true;
+            this.UploadToServer.Location = new System.Drawing.Point(14, 113);
+            this.UploadToServer.Name = "UploadToServer";
+            this.UploadToServer.Size = new System.Drawing.Size(443, 19);
+            this.UploadToServer.TabIndex = 31;
+            this.UploadToServer.Text = "Also anonymously upload to gaming.tools shared price database during export";
+            this.UploadToServer.UseVisualStyleBackColor = true;
+            this.UploadToServer.CheckedChanged += new System.EventHandler(this.UploadToServer_CheckedChanged);
+            // 
+            // HighPerformanceMode
+            // 
+            this.HighPerformanceMode.AutoSize = true;
+            this.HighPerformanceMode.Location = new System.Drawing.Point(409, 54);
+            this.HighPerformanceMode.Name = "HighPerformanceMode";
+            this.HighPerformanceMode.Size = new System.Drawing.Size(157, 19);
+            this.HighPerformanceMode.TabIndex = 30;
+            this.HighPerformanceMode.Text = "High Performance Mode";
+            this.HighPerformanceMode.UseVisualStyleBackColor = true;
+            this.HighPerformanceMode.CheckedChanged += new System.EventHandler(this.HighPerformanceMode_CheckedChanged);
             // 
             // PerformanceLabel
             // 
@@ -207,49 +296,49 @@ namespace TradingPostDataExtractor
             this.StatusBarLabel1.Size = new System.Drawing.Size(0, 17);
             this.StatusBarLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // label5
+            // ParsedResultsLabel
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label5.Location = new System.Drawing.Point(293, 282);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(87, 15);
-            this.label5.TabIndex = 24;
-            this.label5.Text = "Parsed Results";
+            this.ParsedResultsLabel.AutoSize = true;
+            this.ParsedResultsLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.ParsedResultsLabel.Location = new System.Drawing.Point(293, 322);
+            this.ParsedResultsLabel.Name = "ParsedResultsLabel";
+            this.ParsedResultsLabel.Size = new System.Drawing.Size(87, 15);
+            this.ParsedResultsLabel.TabIndex = 24;
+            this.ParsedResultsLabel.Text = "Parsed Results";
             // 
             // ParsedResults
             // 
             this.ParsedResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.ParsedResults.Location = new System.Drawing.Point(293, 300);
+            this.ParsedResults.Location = new System.Drawing.Point(293, 340);
             this.ParsedResults.Name = "ParsedResults";
             this.ParsedResults.RowHeadersVisible = false;
             this.ParsedResults.RowTemplate.Height = 25;
-            this.ParsedResults.Size = new System.Drawing.Size(273, 311);
+            this.ParsedResults.Size = new System.Drawing.Size(273, 276);
             this.ParsedResults.TabIndex = 23;
             // 
-            // label3
+            // RawResultsLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(14, 282);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(74, 15);
-            this.label3.TabIndex = 22;
-            this.label3.Text = "Raw Results";
+            this.RawResultsLabel.AutoSize = true;
+            this.RawResultsLabel.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.RawResultsLabel.Location = new System.Drawing.Point(14, 322);
+            this.RawResultsLabel.Name = "RawResultsLabel";
+            this.RawResultsLabel.Size = new System.Drawing.Size(74, 15);
+            this.RawResultsLabel.TabIndex = 22;
+            this.RawResultsLabel.Text = "Raw Results";
             // 
             // RawResults
             // 
             this.RawResults.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.RawResults.Location = new System.Drawing.Point(14, 300);
+            this.RawResults.Location = new System.Drawing.Point(14, 340);
             this.RawResults.Name = "RawResults";
             this.RawResults.RowHeadersVisible = false;
             this.RawResults.RowTemplate.Height = 25;
-            this.RawResults.Size = new System.Drawing.Size(273, 311);
+            this.RawResults.Size = new System.Drawing.Size(273, 276);
             this.RawResults.TabIndex = 21;
             // 
             // FromImageButton
             // 
-            this.FromImageButton.Location = new System.Drawing.Point(448, 106);
+            this.FromImageButton.Location = new System.Drawing.Point(452, 13);
             this.FromImageButton.Name = "FromImageButton";
             this.FromImageButton.Size = new System.Drawing.Size(115, 35);
             this.FromImageButton.TabIndex = 19;
@@ -261,7 +350,7 @@ namespace TradingPostDataExtractor
             // ExportPricesButton
             // 
             this.ExportPricesButton.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.ExportPricesButton.Location = new System.Drawing.Point(290, 147);
+            this.ExportPricesButton.Location = new System.Drawing.Point(289, 199);
             this.ExportPricesButton.Name = "ExportPricesButton";
             this.ExportPricesButton.Size = new System.Drawing.Size(273, 120);
             this.ExportPricesButton.TabIndex = 18;
@@ -331,7 +420,7 @@ namespace TradingPostDataExtractor
             // TakeScreenshotButton
             // 
             this.TakeScreenshotButton.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.TakeScreenshotButton.Location = new System.Drawing.Point(14, 147);
+            this.TakeScreenshotButton.Location = new System.Drawing.Point(13, 199);
             this.TakeScreenshotButton.Name = "TakeScreenshotButton";
             this.TakeScreenshotButton.Size = new System.Drawing.Size(273, 120);
             this.TakeScreenshotButton.TabIndex = 11;
@@ -385,9 +474,9 @@ namespace TradingPostDataExtractor
         private System.Windows.Forms.Label NewWorldStatus;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button TakeScreenshotButton;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label RawResultsLabel;
         private System.Windows.Forms.DataGridView RawResults;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label ParsedResultsLabel;
         private System.Windows.Forms.DataGridView ParsedResults;
         private System.Windows.Forms.StatusStrip StatusBar;
         private System.Windows.Forms.ToolStripStatusLabel StatusBarLabel1;
@@ -395,6 +484,12 @@ namespace TradingPostDataExtractor
         private System.Windows.Forms.ComboBox LanguageDropdown;
         private System.Windows.Forms.DataGridView PerformanceGrid;
         private System.Windows.Forms.Label PerformanceLabel;
+        private System.Windows.Forms.CheckBox HighPerformanceMode;
+        private System.Windows.Forms.Label ServerLabel;
+        private System.Windows.Forms.ComboBox Server;
+        private System.Windows.Forms.Label RegionLabel;
+        private System.Windows.Forms.ComboBox Region;
+        private System.Windows.Forms.CheckBox UploadToServer;
     }
 }
 

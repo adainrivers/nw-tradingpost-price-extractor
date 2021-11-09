@@ -87,8 +87,9 @@ namespace TradingPostDataExtractor
             return resizedImage;
         }
 
-        public static void QuickNegative(this Image image)
+        public static Image QuickNegative(this Image image)
         {
+            PerformanceProfiler.Current?.Start("Image.QuickNegative");
             var colorMatrix = new ColorMatrix(new[]
             {
                 new float[] {-1, 0, 0, 0, 0},
@@ -105,6 +106,10 @@ namespace TradingPostDataExtractor
             using var g = Graphics.FromImage(image);
             g.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height),
                 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, attributes);
+            image.Save("temp.bmp", ImageFormat.Bmp);
+            var result = Image.FromFile("temp.bmp", false);
+            PerformanceProfiler.Current?.Stop("Image.QuickNegative");
+            return result;
         }
 
 
@@ -138,27 +143,12 @@ namespace TradingPostDataExtractor
   return newImage;
         }
 
-        public static void Negative(this Image image)
-        {
-            PerformanceProfiler.Current?.Start("Image.Negative");
-
-            var bitmap = (Bitmap)image;
-            for (var y = 0; (y <= (bitmap.Height - 1)); y++)
-            {
-                for (var x = 0; (x <= (bitmap.Width - 1)); x++)
-                {
-                    var inv = bitmap.GetPixel(x, y);
-                    inv = Color.FromArgb(255, (255 - inv.R), (255 - inv.G), (255 - inv.B));
-                    bitmap.SetPixel(x, y, inv);
-                }
-            }
-            PerformanceProfiler.Current?.Stop("Image.Negative");
-        }
-
         public static void DrawRect(this Image image, Rectangle rectangle)
         {
+            PerformanceProfiler.Current?.Start("Image.DrawRect");
             using var g = Graphics.FromImage(image);
             g.DrawRectangle(new Pen(Color.White, 1), rectangle);
+            PerformanceProfiler.Current?.Stop("Image.DrawRect");
 
         }
 

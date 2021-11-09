@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
-namespace NonInvasiveKeyboardHookLibrary
+namespace TradingPostDataExtractor.NonInvasiveKeyboardHookLibrary
 {
     /// <summary>
     /// A struct to represent a keybind (key + modifiers)

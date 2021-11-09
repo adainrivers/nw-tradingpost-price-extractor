@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 
-namespace NonInvasiveKeyboardHookLibrary
+namespace TradingPostDataExtractor.NonInvasiveKeyboardHookLibrary
 {
     internal struct KeyboardParams
     {

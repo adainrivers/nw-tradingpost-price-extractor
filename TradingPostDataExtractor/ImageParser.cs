@@ -4,10 +4,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
 using System.Threading.Tasks;
 
 using TesserNet;
+using TradingPostDataExtractor.Models;
 using TradingPostDataExtractor.PerformanceProfiling;
 
 
@@ -16,14 +16,18 @@ namespace TradingPostDataExtractor
 {
     public class ImageParser : IDisposable
     {
-        private const string DebugImagesFolder = "images";
-
+        private readonly bool _highPerformanceMode;
         private double _sizeModifier = 1;
 
         private ITesseract _tesseractForNumbers;
         private ITesseract _tesseractForText;
 
-        public string DebugFilePath { get; private set; }
+        public const string DebugFilePath = "processed-image.png";
+
+        public ImageParser(bool highPerformanceMode)
+        {
+            _highPerformanceMode = highPerformanceMode;
+        }
 
         public async Task<List<RawPriceData>> Parse(string language, Image image)
         {
@@ -36,20 +40,14 @@ namespace TradingPostDataExtractor
                 ItemName = GetItemName(adjustedImage, i),
                 Price = GetItemPrice(adjustedImage, i),
                 Availability = GetAvailability(adjustedImage, i),
-                Tier = GetTier(adjustedImage, i),
                 GearScore = GetGearScore(adjustedImage, i)
             }).ToList();
 
-            var debugImagesFolder = Path.Combine(Constants.DebugFolder, DebugImagesFolder);
-            if (!Directory.Exists(debugImagesFolder))
+            if (!_highPerformanceMode)
             {
-                Directory.CreateDirectory(debugImagesFolder);
+                using var debugImage = adjustedImage.ConvertToBlackAndWhite();
+                debugImage.Save(DebugFilePath, ImageFormat.Png);
             }
-
-            DebugFilePath = Path.Combine(debugImagesFolder, $"{DateTime.UtcNow:yyyyMMddHHmmss}.png");
-            using var debugImage = adjustedImage.ConvertToBlackAndWhite();
-            debugImage.QuickNegative();
-            debugImage.Save(DebugFilePath, ImageFormat.Png);
 
             return result;
         }
@@ -91,37 +89,6 @@ namespace TradingPostDataExtractor
                 true, true, false, false);
         }
 
-
-        private string GetTier(Image image, int row)
-        {
-            _tesseractForText.Options.Whitelist = "IV";
-            //var allVersions = new List<string>();
-            //foreach (var pageSegmentation in Enum.GetValues<PageSegmentation>())
-            //{
-            //    _tesseractForText.Options.PageSegmentation = pageSegmentation;
-            //    allVersions.Add(GetTextFromRectangle(
-            //        _tesseractForText,
-            //        image,
-            //        new Rectangle(
-            //            ModifiedSize(1111),
-            //            GetRowY(row),
-            //            ModifiedSize(55),
-            //            ModifiedSize(76)),
-            //        false, true, false));
-            //}
-            _tesseractForText.Options.PageSegmentation = PageSegmentation.Word;
-
-            return GetTextFromRectangle(
-                _tesseractForText,
-                image,
-                new Rectangle(
-                    ModifiedSize(1111),
-                    GetRowY(row),
-                    ModifiedSize(55),
-                    ModifiedSize(76)),
-                true, true, false, true);
-        }
-
         private string GetGearScore(Image image, int row)
         {
             return GetTextFromRectangle(
@@ -132,7 +99,7 @@ namespace TradingPostDataExtractor
                     GetRowY(row),
                     ModifiedSize(65),
                     ModifiedSize(76)),
-                true, true, false, false);
+                false, true, false, false);
         }
 
         private string GetAvailability(Image image, int row)
@@ -145,7 +112,7 @@ namespace TradingPostDataExtractor
                     GetRowY(row),
                     ModifiedSize(60),
                     ModifiedSize(76)),
-                true, true, false, false);
+                true, true, false, false, 1, 3, 5);
         }
 
         private int GetRowY(int row)
@@ -160,13 +127,18 @@ namespace TradingPostDataExtractor
             bool adjustImage,
             bool negative,
             bool blackAndWhite,
-            bool resize)
+            bool resize,
+            float brightness = 1,
+            float contrast = 3,
+            float gamma = 5
+            )
         {
 
             using var croppedImage = image.CreateCrop(rect);
 
             Image resizedImage = null;
             Image adjustedImage = null;
+            Image negativeImage = null;
             Image blackandwhiteImage = null;
 
             if (resize)
@@ -176,27 +148,31 @@ namespace TradingPostDataExtractor
 
             if (adjustImage)
             {
-                adjustedImage = (resizedImage ?? croppedImage).AdjustImage();
+                adjustedImage = (resizedImage ?? croppedImage).AdjustImage(brightness, contrast, gamma);
             }
 
             if (negative)
             {
-                (adjustedImage ?? resizedImage ?? croppedImage).Negative();
+                negativeImage = (adjustedImage ?? resizedImage ?? croppedImage).QuickNegative();
             }
 
             if (blackAndWhite)
             {
-                blackandwhiteImage = (adjustedImage ?? resizedImage ?? croppedImage).ConvertToBlackAndWhite();
+                blackandwhiteImage = (negativeImage ?? adjustedImage ?? resizedImage ?? croppedImage).ConvertToBlackAndWhite();
             }
 
-            var finalImage = blackandwhiteImage ?? adjustedImage ?? resizedImage ?? croppedImage;
+            var finalImage = blackandwhiteImage ?? negativeImage ?? adjustedImage ?? resizedImage ?? croppedImage;
 
 #if DEBUG
-            if (!Directory.Exists("megadebug"))
+            if (!_highPerformanceMode)
             {
-                Directory.CreateDirectory("megadebug");
+                if (!Directory.Exists("megadebug"))
+                {
+                    Directory.CreateDirectory("megadebug");
+                }
+
+                finalImage.Save(Path.Combine("megadebug", $"{rect.X}-{rect.Y}.png"), ImageFormat.Png);
             }
-            finalImage.Save(Path.Combine("megadebug", $"{rect.X}-{rect.Y}.png"), ImageFormat.Png);
 #endif
 
             PerformanceProfiler.Current?.Start("ImageParser.Ocr");
@@ -205,33 +181,15 @@ namespace TradingPostDataExtractor
 
             resizedImage?.Dispose();
             adjustedImage?.Dispose();
+            negativeImage?.Dispose();
             blackandwhiteImage?.Dispose();
+            if (!_highPerformanceMode)
+            {
+                image.DrawRect(rect);
+            }
 
-            image.DrawRect(rect);
             return result;
         }
-
-        //private void DrawRect(Image<Rgba32> image, Rectangle rectangle)
-        //{
-        //    PerformanceProfiler.Current?.Start("ImageParser.DrawRect");
-        //    var lines = new List<PointF>();
-        //    lines.Add(new PointF(rectangle.Left, rectangle.Top));
-        //    lines.Add(new PointF(rectangle.Left, rectangle.Bottom));
-        //    image.Mutate(i => i.DrawLines(Color.DarkBlue, 1f, lines.ToArray()));
-        //    lines.Clear();
-        //    lines.Add(new PointF(rectangle.Right, rectangle.Top));
-        //    lines.Add(new PointF(rectangle.Right, rectangle.Bottom));
-        //    image.Mutate(i => i.DrawLines(Color.DarkBlue, 1f, lines.ToArray()));
-        //    lines.Clear();
-        //    lines.Add(new PointF(rectangle.Left, rectangle.Top));
-        //    lines.Add(new PointF(rectangle.Right, rectangle.Top));
-        //    image.Mutate(i => i.DrawLines(Color.DarkBlue, 1f, lines.ToArray()));
-        //    lines.Clear();
-        //    lines.Add(new PointF(rectangle.Left, rectangle.Bottom));
-        //    lines.Add(new PointF(rectangle.Right, rectangle.Bottom));
-        //    image.Mutate(i => i.DrawLines(Color.DarkBlue, 1f, lines.ToArray()));
-        //    PerformanceProfiler.Current?.Stop("ImageParser.DrawRect");
-        //}
 
         private int ModifiedSize(int imageSize)
         {
