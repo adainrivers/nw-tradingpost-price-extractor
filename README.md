@@ -3,6 +3,9 @@
 
 ![image](https://user-images.githubusercontent.com/93623214/141015986-7066e500-1f3b-4087-b2ff-7745d679aba8.png)
 
+## Discord
+https://discord.gg/6CDf4MTd6f
+
 ## How to build
 - Install .NET 5.0 SDK (Windows x64) from https://dotnet.microsoft.com/download/dotnet/5.0
 - Run TradingPostDataExtractor\publish.cmd, which will create TradingPostDataExtractor.exe in Publish folder.
