@@ -97,6 +97,7 @@ namespace TradingPostDataExtractor
             // openFileDialog1
             // 
             this.openFileDialog1.Filter = "Image Files|*.BMP;*.JPG;*.GIF;*.PNG|All files (*.*)|*.*";
+            this.openFileDialog1.Multiselect = true;
             // 
             // splitContainer1
             // 

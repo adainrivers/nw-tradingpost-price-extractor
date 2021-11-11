@@ -390,8 +390,11 @@ namespace TradingPostDataExtractor
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                using var image = Image.FromFile(openFileDialog1.FileName);
-                await ProcessImage(image);
+                foreach (var fileName in openFileDialog1.FileNames)
+                {
+                    using var image = Image.FromFile(fileName);
+                    await ProcessImage(image);
+                }
                 RawResults.DataSource = _currentScreenshotRawPrices;
                 ParsedResults.DataSource = _currentScreenshotPrices;
             }
