@@ -39,8 +39,9 @@ namespace TradingPostDataExtractor
             {
                 ItemName = GetItemName(adjustedImage, i),
                 Price = GetItemPrice(adjustedImage, i),
-                Availability = GetAvailability(adjustedImage, i),
-                GearScore = GetGearScore(adjustedImage, i)
+                GearScore = GetGearScore(adjustedImage, i),
+                Tier = GetTier(adjustedImage, i),
+                Availability = GetAvailability(adjustedImage, i)
             }).ToList();
 
             if (!_highPerformanceMode)
@@ -85,6 +86,22 @@ namespace TradingPostDataExtractor
                     ModifiedSize(964),
                     GetRowY(row),
                     ModifiedSize(146),
+                    ModifiedSize(76)),
+                true, true, false, false).Replace(" ","");
+        }
+
+
+        private string GetTier(Image image, int row)
+        {
+            _tesseractForText.Options.PageSegmentation = PageSegmentation.Raw;
+            _tesseractForText.Options.Whitelist = "IV";
+            return GetTextFromRectangle(
+                _tesseractForText,
+                image,
+                new Rectangle(
+                    ModifiedSize(1113),
+                    GetRowY(row),
+                    ModifiedSize(55),
                     ModifiedSize(76)),
                 true, true, false, false);
         }

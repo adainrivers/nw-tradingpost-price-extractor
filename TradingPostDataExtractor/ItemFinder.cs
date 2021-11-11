@@ -12,8 +12,10 @@ namespace TradingPostDataExtractor
     {
         private static readonly Dictionary<string,List<ItemData>> Items = new(StringComparer.OrdinalIgnoreCase);
 
-        public static ItemData GetItem(string localizedName, int? gearScore)
+        public static ItemData GetItem(string localizedName, int? gearScore, int? tier)
         {
+            var acceptableDistance = localizedName.Length > 10 ? 2 : 1;
+
             localizedName = FixWords(localizedName);
 
             if (Items == null || Items.Count == 0)
@@ -23,29 +25,38 @@ namespace TradingPostDataExtractor
 
             if (Items.TryGetValue(localizedName, out var itemPossibilities))
             {
-                return GetItemIdFromPossibilities(itemPossibilities, gearScore);
+                return GetItemIdFromPossibilities(itemPossibilities,  gearScore, tier);
+            }
+
+            if (localizedName.Contains("m"))
+            {
+                var rrName = localizedName.Replace("m", "rr");
+                if (Items.TryGetValue(rrName, out var rrPossibilities))
+                {
+                    return GetItemIdFromPossibilities(rrPossibilities, gearScore, tier);
+                }
             }
 
             var smallestDistance = int.MaxValue;
             var currentName = localizedName;
             foreach (var itemName in Items.Keys)
             {
-                var distance = DamerauLevenshteinDistance(localizedName, itemName, 2);
+                var distance = DamerauLevenshteinDistance(localizedName, itemName, 5);
                 if (smallestDistance <= distance) continue;
                 smallestDistance = distance;
                 currentName = itemName;
             }
 
-            if (smallestDistance < 2)
+            if (smallestDistance <= acceptableDistance)
             {
-                return GetItemIdFromPossibilities(Items[currentName], gearScore);
+                return GetItemIdFromPossibilities(Items[currentName], gearScore, tier);
             }
 
             return null;
 
         }
 
-        private static ItemData GetItemIdFromPossibilities(List<ItemData> itemPossibilities, int? gearScore)
+        private static ItemData GetItemIdFromPossibilities(List<ItemData> itemPossibilities, int? gearScore, int? tier)
         {
             if (itemPossibilities.Count == 0)
             {
@@ -57,12 +68,18 @@ namespace TradingPostDataExtractor
                 return itemPossibilities[0];
             }
 
-            if (!gearScore.HasValue)
+            if (!gearScore.HasValue && !tier.HasValue)
             {
                 return itemPossibilities[0];
             }
 
-            var item = itemPossibilities.FirstOrDefault(ip => ip.GearScore == gearScore);
+            var item = itemPossibilities.FirstOrDefault(ip => ip.Tier == tier);
+            if (item != null)
+            {
+                return item;
+            }
+
+            item = itemPossibilities.FirstOrDefault(ip => ip.GearScore == gearScore);
             if (item != null)
             {
                 return item;
@@ -100,7 +117,9 @@ namespace TradingPostDataExtractor
                             Name = localizedName,
                             GearScore = item.GS,
                             MinGearScore = item.MinGS,
-                            MaxGearScore = item.MaxGS});
+                            MaxGearScore = item.MaxGS,
+                            Tier = item.Tier
+                        });
                 }
             }
         }

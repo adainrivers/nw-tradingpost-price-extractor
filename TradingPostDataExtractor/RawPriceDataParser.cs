@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using TradingPostDataExtractor.Models;
+﻿using TradingPostDataExtractor.Models;
 using TradingPostDataExtractor.PerformanceProfiling;
 
 namespace TradingPostDataExtractor
@@ -50,16 +49,41 @@ namespace TradingPostDataExtractor
                 gearScoreResult = gearScore;
             }
 
+            var tier = RomanToInt(rawPriceData.Tier);
 
-            var item = ItemFinder.GetItem(rawPriceData.ItemName, gearScoreResult);
+
+            var item = ItemFinder.GetItem(rawPriceData.ItemName, gearScoreResult, tier);
             if (item == null)
             {
                 return false;
             }
-            priceData = new PriceData { ItemId = item.Id, ItemName = item.Name, Price = price, Availability = availability, GearScore = gearScoreResult };
+            priceData = new PriceData { ItemId = item.Id, ItemName = item.Name, Price = price, Availability = availability, GearScore = gearScoreResult, Tier = tier};
 
             PerformanceProfiler.Current?.Stop("PriceDataParser.Parse");
             return true;
+        }
+
+        private static int? RomanToInt(string roman)
+        {
+            if (roman == null)
+            {
+                return null;
+            }
+            switch (roman.Trim().ToUpperInvariant())
+            {
+                case "I":
+                    return 1;
+                case "II":
+                    return 2;
+                case "III":
+                    return 3;
+                case "IV":
+                    return 4;
+                case "V":
+                    return 5;
+                default:
+                    return null;
+            }
         }
     }
 }
