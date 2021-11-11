@@ -50,6 +50,7 @@ namespace TradingPostDataExtractor
             this.LanguageDropdown = new System.Windows.Forms.ComboBox();
             this.StatusBar = new System.Windows.Forms.StatusStrip();
             this.StatusBarLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.UpdateNotification = new System.Windows.Forms.ToolStripStatusLabel();
             this.ParsedResultsLabel = new System.Windows.Forms.Label();
             this.ParsedResults = new System.Windows.Forms.DataGridView();
             this.RawResultsLabel = new System.Windows.Forms.Label();
@@ -282,7 +283,8 @@ namespace TradingPostDataExtractor
             // StatusBar
             // 
             this.StatusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.StatusBarLabel1});
+            this.StatusBarLabel1,
+            this.UpdateNotification});
             this.StatusBar.Location = new System.Drawing.Point(10, 774);
             this.StatusBar.Name = "StatusBar";
             this.StatusBar.Size = new System.Drawing.Size(565, 22);
@@ -295,6 +297,13 @@ namespace TradingPostDataExtractor
             this.StatusBarLabel1.Name = "StatusBarLabel1";
             this.StatusBarLabel1.Size = new System.Drawing.Size(0, 17);
             this.StatusBarLabel1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // UpdateNotification
+            // 
+            this.UpdateNotification.IsLink = true;
+            this.UpdateNotification.Name = "UpdateNotification";
+            this.UpdateNotification.Size = new System.Drawing.Size(0, 17);
+            this.UpdateNotification.Click += new System.EventHandler(this.UpdateNotification_Click);
             // 
             // ParsedResultsLabel
             // 
@@ -490,6 +499,7 @@ namespace TradingPostDataExtractor
         private System.Windows.Forms.Label RegionLabel;
         private System.Windows.Forms.ComboBox Region;
         private System.Windows.Forms.CheckBox UploadToServer;
+        private System.Windows.Forms.ToolStripStatusLabel UpdateNotification;
     }
 }
 

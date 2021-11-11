@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
+using TradingPostDataExtractor.GitHub;
 using TradingPostDataExtractor.Models;
 using TradingPostDataExtractor.NonInvasiveKeyboardHookLibrary;
 using TradingPostDataExtractor.PerformanceProfiling;
@@ -257,7 +256,7 @@ namespace TradingPostDataExtractor
             Environment.Exit(0);
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        private async void MainForm_Load(object sender, EventArgs e)
         {
             FromImageButton.Visible = true;
             PerformanceGrid.Visible = true;
@@ -282,9 +281,29 @@ namespace TradingPostDataExtractor
             {
                 Directory.CreateDirectory(Constants.DebugFolder);
             }
+            await CheckForUpdate();
         }
 
         private const string ConfigurationFile = "config.json";
+
+        private async Task CheckForUpdate()
+        {
+            var latestRelease = await GitHubApiClient.GetLatestReleaseAsync();
+            var latestVersionNumber = GitHubApiClient.GetNumericReleaseNumber(latestRelease);
+
+            var currentVersion = typeof(MainForm).Assembly.GetName().Version;
+            if (currentVersion != null)
+            {
+                var currentVersionNumber =
+                    currentVersion.Major * 100 + currentVersion.Minor * 10 + currentVersion.Build;
+
+                if (currentVersionNumber < latestVersionNumber)
+                {
+                    UpdateNotification.Text = "A new version is available. Click to download.";
+                    UpdateNotification.Tag = latestRelease.HtmlUrl;
+                }
+            }
+        }
 
         public void SaveConfiguration()
         {
@@ -463,6 +482,20 @@ namespace TradingPostDataExtractor
             var serverText = Server.Text;
             Server.DataSource = Servers.GetServers(Region.Text);
             Server.Text = serverText;
+        }
+
+        private void UpdateNotification_Click(object sender, EventArgs e)
+        {
+            var link = UpdateNotification.Tag.ToString();
+            if (link != null && link.StartsWith("https://"))
+            {
+                var psInfo = new ProcessStartInfo
+                {
+                    FileName = link,
+                    UseShellExecute = true
+                };
+                Process.Start(psInfo);
+            }
         }
     }
 
