@@ -23,7 +23,7 @@ New World TOS is very restrictive, even with extracting information from screens
 ## How to use
 - Launch the TradingPostDataExtractor and New World (it doesn't matter which one you launch first.)
 - Make sure New World is running in FullScreen mode (sorry, it doesn't support windowed mode yet)
-- Optionally, increase the New World Gamma setting to maximum for better detection rate.
+- Optionally, increase the New World Contrast setting to maximum for better detection rate.
 - Visit the Trading Post, search for something and hit F11 (or the big button on app)
 - Scan as many pages / orders you want (you might have problems when you scroll down, try to aim it right, whatever that means)
 - Hit the Export Prices button and save the json file.
