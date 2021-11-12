@@ -215,16 +215,19 @@ namespace TradingPostDataExtractor
                 var json = JsonConvert.SerializeObject(_prices, Formatting.Indented);
                 await File.WriteAllTextAsync(fileName, json, Encoding.UTF8);
 
-                var debugInfo = new DebugInfo
+                if (!HighPerformanceMode.Checked)
                 {
-                    NewWorldGameWindowDimensions = _newWorldGameWindowDimensions,
-                    RawPriceData = _rawPrices,
-                    InvalidPriceData = _invalidPrices
-                };
+                    var debugInfo = new DebugInfo
+                    {
+                        NewWorldGameWindowDimensions = _newWorldGameWindowDimensions,
+                        RawPriceData = _rawPrices,
+                        InvalidPriceData = _invalidPrices
+                    };
 
-                var debugFilePath = Path.Combine(Constants.DebugFolder,
-                    $"DebugInfo-{DateTime.UtcNow:yyyyMMddHHmmss}.json");
-                await File.WriteAllTextAsync(debugFilePath, JsonConvert.SerializeObject(debugInfo, Formatting.Indented));
+                    var debugFilePath = Path.Combine(Constants.DebugFolder,
+                        $"DebugInfo-{DateTime.UtcNow:yyyyMMddHHmmss}.json");
+                    await File.WriteAllTextAsync(debugFilePath, JsonConvert.SerializeObject(debugInfo, Formatting.Indented));
+                }
                 if (UploadToServer.Checked)
                 {
                     await PriceDataUploader.Upload(json, Region.Text, Server.Text);

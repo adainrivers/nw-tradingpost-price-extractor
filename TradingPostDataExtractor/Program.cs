@@ -23,6 +23,7 @@ namespace TradingPostDataExtractor
 
             ItemFinder.Initialize();
             Servers.Initialize();
+            TerritoryFinder.Initialize();
 
             Application.Run(new MainForm());
         }

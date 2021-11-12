@@ -121,6 +121,9 @@
   <data name="servers" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\servers.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="territory_names" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\territory-names.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="trading_post_items" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\trading-post-items.json;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

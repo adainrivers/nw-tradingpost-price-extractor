@@ -41,7 +41,8 @@ namespace TradingPostDataExtractor
                 Price = GetItemPrice(adjustedImage, i),
                 GearScore = GetGearScore(adjustedImage, i),
                 Tier = GetTier(adjustedImage, i),
-                Availability = GetAvailability(adjustedImage, i)
+                Availability = GetAvailability(adjustedImage, i),
+                Location = GetLocation(adjustedImage, i)
             }).ToList();
 
             if (!_highPerformanceMode)
@@ -130,6 +131,23 @@ namespace TradingPostDataExtractor
                     ModifiedSize(60),
                     ModifiedSize(76)),
                 true, true, false, false, 1, 3, 5);
+        }
+
+        private string GetLocation(Image image, int row)
+        {
+            _tesseractForText.Options.PageSegmentation = PageSegmentation.SegmentationOsd;
+            _tesseractForText.Options.Whitelist = "";
+
+            var result = GetTextFromRectangle(
+                _tesseractForText,
+                image,
+                new Rectangle(ModifiedSize(1702),
+                    GetRowY(row),
+                    ModifiedSize(116),
+                    ModifiedSize(76)),
+                true, true, false, false);
+            result = result.Replace("\n", " ");
+            return result;
         }
 
         private int GetRowY(int row)

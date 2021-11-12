@@ -7,5 +7,6 @@
         public string Tier { get; set; }
         public string GearScore { get; set; }
         public string Availability { get; set; }
+        public string Location { get; set; }
     }
 }

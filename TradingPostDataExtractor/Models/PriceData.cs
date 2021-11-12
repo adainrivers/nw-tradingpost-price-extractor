@@ -1,4 +1,6 @@
-﻿namespace TradingPostDataExtractor.Models
+﻿using System;
+
+namespace TradingPostDataExtractor.Models
 {
     public class PriceData
     {
@@ -8,5 +10,8 @@
         public decimal Price { get; set; }
         public int Availability { get; set; }
         public int? GearScore { get; set; }
+        public string LocationId { get; set; }
+        public string Location { get; set; }
+        public DateTime TimeCreatedUtc { get; set; }
     }
 }

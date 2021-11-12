@@ -1,4 +1,5 @@
-﻿using TradingPostDataExtractor.Models;
+﻿using System;
+using TradingPostDataExtractor.Models;
 using TradingPostDataExtractor.PerformanceProfiling;
 
 namespace TradingPostDataExtractor
@@ -51,13 +52,16 @@ namespace TradingPostDataExtractor
 
             var tier = RomanToInt(rawPriceData.Tier);
 
+            var location = TerritoryFinder.GetTerritory(rawPriceData.Location);
+
 
             var item = ItemFinder.GetItem(rawPriceData.ItemName, gearScoreResult, tier);
             if (item == null)
             {
                 return false;
             }
-            priceData = new PriceData { ItemId = item.Id, ItemName = item.Name, Price = price, Availability = availability, GearScore = gearScoreResult, Tier = tier};
+            var currentTime = DateTime.UtcNow;
+            priceData = new PriceData { ItemId = item.Id, ItemName = item.Name, Price = price, Availability = availability, GearScore = gearScoreResult, Tier = tier, LocationId = location?.TerritoryId, Location = location?.Name, TimeCreatedUtc = currentTime};
 
             PerformanceProfiler.Current?.Stop("PriceDataParser.Parse");
             return true;

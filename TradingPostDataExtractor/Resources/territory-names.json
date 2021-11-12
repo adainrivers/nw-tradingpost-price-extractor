@@ -1,0 +1,482 @@
+[
+  {
+    "territoryId": "reekwater",
+    "names": [
+      "Reekwater",
+      "Eaux-Fétides",
+      "Aguas Fétidas",
+      "Brackwasser",
+      "Acquafetida",
+      "Cuchnąca Woda",
+      "Águas Fétidas"
+    ]
+  },
+  {
+    "territoryId": "edengrove",
+    "names": [
+      "Edengrove",
+      "Bois-Éden",
+      "Arboleda del Edén",
+      "Edenhain",
+      "Frutteto dell'Eden",
+      "Rajski Gaj",
+      "Bosque do Éden"
+    ]
+  },
+  {
+    "territoryId": "darren_06",
+    "names": [
+      "darren06",
+      "darren06",
+      "darren06",
+      "darren06",
+      "darren06",
+      "darren06",
+      "darren06"
+    ]
+  },
+  {
+    "territoryId": "liberton",
+    "names": [
+      "Liberton",
+      "Liberton",
+      "Liberton",
+      "Liberton",
+      "Liberton",
+      "Liberton",
+      "Líberton"
+    ]
+  },
+  {
+    "territoryId": "scottopia",
+    "names": [
+      "Scotttopia",
+      "Scotttopie",
+      "Scotttopia",
+      "Scotttopia",
+      "Scotttopia",
+      "Scotttopia",
+      "Escotópolis"
+    ]
+  },
+  {
+    "territoryId": "faywin",
+    "names": [
+      "Faywin",
+      "Faywin",
+      "Faywin",
+      "Faywin",
+      "Faywin",
+      "Faywin",
+      "Faywin"
+    ]
+  },
+  {
+    "territoryId": "everfall",
+    "names": [
+      "Everfall",
+      "Haute-Chute",
+      "Ocaso",
+      "Immerfall",
+      "Calata eterna",
+      "Jesieniowiecznia",
+      "Queda Eterna"
+    ]
+  },
+  {
+    "territoryId": "brimstonesands",
+    "names": [
+      "Brimstone Sands",
+      "Sulfure",
+      "Arenas de Azufre",
+      "Schwefelsandwüste",
+      "Deserti di zolfo",
+      "Piaskobrzegi",
+      "Areias de Enxofre"
+    ]
+  },
+  {
+    "territoryId": "bradburyburgh",
+    "names": [
+      "Bradburyborough",
+      "Bradburyborough",
+      "Bradburyborough",
+      "Bradburyburg",
+      "Bradburyborough",
+      "Bradburyborough",
+      "Bradesburgo"
+    ]
+  },
+  {
+    "territoryId": "priestland",
+    "names": [
+      "Priestland",
+      "Priestland",
+      "Priestland",
+      "Priestland",
+      "Priestland",
+      "Priestland",
+      "Sacerdócia"
+    ]
+  },
+  {
+    "territoryId": "mourningdale",
+    "names": [
+      "Mourningdale",
+      "Val des Larmes",
+      "Valle del Pesar",
+      "Klagental",
+      "Valle del cordoglio",
+      "Żałobnica",
+      "Vale das Lamentações"
+    ]
+  },
+  {
+    "territoryId": "sulliville",
+    "names": [
+      "Sulliville",
+      "Sulliville",
+      "Sulliville",
+      "Sulliville",
+      "Sulliville",
+      "Sulliville",
+      "Sulliville"
+    ]
+  },
+  {
+    "territoryId": "darren_09",
+    "names": [
+      "darren09",
+      "darren09",
+      "darren09",
+      "darren09",
+      "darren09",
+      "darren09",
+      "darren09"
+    ]
+  },
+  {
+    "territoryId": "darren_04",
+    "names": [
+      "darren04",
+      "darren04",
+      "darren04",
+      "darren04",
+      "darren04",
+      "darren04",
+      "darren04"
+    ]
+  },
+  {
+    "territoryId": "darren_12",
+    "names": [
+      "darren12",
+      "darren12",
+      "darren12",
+      "darren12",
+      "darren12",
+      "darren12",
+      "darren12"
+    ]
+  },
+  {
+    "territoryId": "cutlasskeys",
+    "names": [
+      "Cutlass Keys",
+      "Îles des Lames",
+      "Cayos del Alfanje",
+      "Entermesserriff",
+      "Scogliere della sciabola",
+      "Wyspy Kordelasowe",
+      "Ilhéus do Sabre"
+    ]
+  },
+  {
+    "territoryId": "darren_08",
+    "names": [
+      "darren08",
+      "darren08",
+      "darren08",
+      "darren08",
+      "darren08",
+      "darren08",
+      "darren08"
+    ]
+  },
+  {
+    "territoryId": "devworld_red",
+    "names": [
+      "DevWorld RED \\n (PRIMARY HUB)",
+      "Monde des développeurs ROUGE\\n(FOYER PRIMAIRE)",
+      "Mundo de los desarrolladores ROJO \\n (CENTRO PRINCIPAL)",
+      "DevWorld ROT \\n (HAUPTZENTRUM)",
+      "Mondo sviluppatori ROSSO\\n(CENTRO PRIMARIO)",
+      "DevWorld RED \\n (GŁÓWNY)",
+      "Mundo dos Desenvolvedores VERMELHO \\n (HUB PRIMÁRIO)"
+    ]
+  },
+  {
+    "territoryId": "devworld_blue",
+    "names": [
+      "DevWorld BLUE \\n(SECONDARY HUB)",
+      "Monde des développeurs BLEU\\n(FOYER SECONDAIRE)",
+      "Mundo de los desarrolladores AZUL \\n(CENTRO SECUNDARIO)",
+      "DevWorld BLAU \\n(NEBENZENTRUM)",
+      "Mondo sviluppatori BLU\\n(CENTRO SECONDARIO)",
+      "DevWorld BLUE \\n(DODATKOWY)",
+      "Mundo dos Desenvolvedores AZUL \\n(HUB SECUNDÁRIO)"
+    ]
+  },
+  {
+    "territoryId": "queensport",
+    "names": [
+      "Ebonscale Reach",
+      "Bief de Nerécaille",
+      "Altos de Escamanegra",
+      "Ebenmaß",
+      "Scaglia d'ebano",
+      "Czarna Łuska",
+      "Crosta de Ébano"
+    ]
+  },
+  {
+    "territoryId": "firstlight",
+    "names": [
+      "First Light",
+      "Levant",
+      "Primera Luz",
+      "Erstes Licht",
+      "Prima luce",
+      "Brzask",
+      "Primeira Luz"
+    ]
+  },
+  {
+    "territoryId": "campground",
+    "names": [
+      "Campground",
+      "Bivouac",
+      "Campamento",
+      "Lagerplatz",
+      "Accampamento",
+      "Obozowisko",
+      "Acampamento"
+    ]
+  },
+  {
+    "territoryId": "darren_05",
+    "names": [
+      "darren05",
+      "darren05",
+      "darren05",
+      "darren05",
+      "darren05",
+      "darren05",
+      "darren05"
+    ]
+  },
+  {
+    "territoryId": "darren_10",
+    "names": [
+      "darren10",
+      "darren10",
+      "darren10",
+      "darren10",
+      "darren10",
+      "darren10",
+      "darren10"
+    ]
+  },
+  {
+    "territoryId": "darren_02",
+    "names": [
+      "darren02",
+      "darren02",
+      "darren02",
+      "darren02",
+      "darren02",
+      "darren02",
+      "darren02"
+    ]
+  },
+  {
+    "territoryId": "laneville",
+    "names": [
+      "Laneville",
+      "Laneville",
+      "Laneville",
+      "Laneville",
+      "Laneville",
+      "Laneville",
+      "Laneville"
+    ]
+  },
+  {
+    "territoryId": "darren_03",
+    "names": [
+      "darren03",
+      "darren03",
+      "darren03",
+      "darren03",
+      "darren03",
+      "darren03",
+      "darren03"
+    ]
+  },
+  {
+    "territoryId": "brightwood",
+    "names": [
+      "Brightwood",
+      "Boisclair",
+      "Bosque Luminoso",
+      "Lichtholz",
+      "Boscobrillante",
+      "Lśniąca Knieja",
+      "Bosque Reluzente"
+    ]
+  },
+  {
+    "territoryId": "darren_11",
+    "names": [
+      "darren11",
+      "darren11",
+      "darren11",
+      "darren11",
+      "darren11",
+      "darren11",
+      "darren11"
+    ]
+  },
+  {
+    "territoryId": "shatteredmountain",
+    "names": [
+      "Shattered Mountain",
+      "Montagne du Haut-Chaos",
+      "Cima Quebrada",
+      "Bruchberg",
+      "Monte infranto",
+      "Strzaskana Góra",
+      "Montanha Arruinada"
+    ]
+  },
+  {
+    "territoryId": "darren_01",
+    "names": [
+      "darren01",
+      "darren01",
+      "darren01",
+      "darren01",
+      "darren01",
+      "darren01",
+      "darren01"
+    ]
+  },
+  {
+    "territoryId": "weaversfen",
+    "names": [
+      "Weaver's Fen",
+      "Marais des Trames",
+      "Ciénaga de los Tejedores",
+      "Webermoor",
+      "Palude del tessitore",
+      "Tkackie Mokradła",
+      "Pântano do Tecelão"
+    ]
+  },
+  {
+    "territoryId": "dantonia",
+    "names": [
+      "Dantonia",
+      "Dantonie",
+      "Dantonia",
+      "Dantonia",
+      "Dantonia",
+      "Dantonia",
+      "Dantônia"
+    ]
+  },
+  {
+    "territoryId": "windsward",
+    "names": [
+      "Windsward",
+      "Gré-du-Vent",
+      "Guardaelviento",
+      "Windkreis",
+      "Sopravvento",
+      "Wiatrochron",
+      "Guardaventos"
+    ]
+  },
+  {
+    "territoryId": "greatcleave",
+    "names": [
+      "Great Cleave",
+      "La grande Faille",
+      "Gran Grieta",
+      "Tiefe Schlucht",
+      "Grande Breccia",
+      "Wielka Wyrwa",
+      "Grande Fenda"
+    ]
+  },
+  {
+    "territoryId": "jamesborough",
+    "names": [
+      "Jamesborough",
+      "Jamesborough",
+      "Jamesborough",
+      "Jamesburg",
+      "Jamesborough",
+      "Jamesborough",
+      "Jamesburgo"
+    ]
+  },
+  {
+    "territoryId": "darren_07",
+    "names": [
+      "darren07",
+      "darren07",
+      "darren07",
+      "darren07",
+      "darren07",
+      "darren07",
+      "darren07"
+    ]
+  },
+  {
+    "territoryId": "heckervania",
+    "names": [
+      "Heckervania",
+      "Heckervanie",
+      "Heckervania",
+      "Heckervanien",
+      "Heckervania",
+      "Heckervania",
+      "Racrevânia"
+    ]
+  },
+  {
+    "territoryId": "monarchsbluffs",
+    "names": [
+      "Monarch's Bluffs",
+      "Falaises du Roy",
+      "Riscos del Monarca",
+      "Königsfels",
+      "Promontorio del Monarca",
+      "Urwiska Monarchy",
+      "Falésias do Monarca"
+    ]
+  },
+  {
+    "territoryId": "restlessshore",
+    "names": [
+      "Restless Shore",
+      "Rive tourmentée",
+      "Costa de la Zozobra",
+      "Unstete Küste",
+      "Sponda inquieta",
+      "Niespokojne Brzegi",
+      "Costa Tempestuosa"
+    ]
+  }
+]
