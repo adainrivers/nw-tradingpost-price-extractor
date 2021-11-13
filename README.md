@@ -8,7 +8,7 @@ https://discord.gg/6CDf4MTd6f
 
 ## How to build
 - Install .NET 5.0 SDK (Windows x64) from https://dotnet.microsoft.com/download/dotnet/5.0
-- Run TradingPostDataExtractor\publish.cmd, which will create TradingPostDataExtractor.exe in Publish folder.
+- Run publish.cmd, which will create TradingPostDataExtractor.exe in Publish folder.
 
 If you don't wanna deal with that, just download the binary release from: https://github.com/adainrivers/nw-tradingpost-price-extractor/releases/tag/0.1.8
 
