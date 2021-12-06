@@ -29,10 +29,6 @@ New World TOS is very restrictive, even with extracting information from screens
 - Scan as many pages / orders you want (you might have problems when you scroll down, try to aim it right, whatever that means)
 - Hit the Export Prices button and save the json file.
 
-## What is this gaming.tools shared price database?
-
-It's an attempt to create a public item prices database, if there are enough contributors and interest. So, thank you for your contribution in advance.
-
 ## Credits
 - https://github.com/CptWesley, author of https://github.com/CptWesley/NewWorldMinimap for inspiration and for the beautiful https://github.com/CptWesley/TesserNet library.
 
