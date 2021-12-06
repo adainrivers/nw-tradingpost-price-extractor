@@ -1,3 +1,7 @@
+# This tool is very likely to be against the [New World Terms of Service](https://www.amazon.com/gp/help/customer/display.html?nodeId=201482650&pop-up=1), so use it absolutely at your own risk.
+
+See https://forums.newworld.com/t/sperrung-ohne-erkl%C3%A4rung/618381 for details.
+
 # New World Trading Post Price Extractor
 (Relatively) Easy to use New World trading post price extraction tool.
 
@@ -24,7 +28,6 @@ New World TOS is very restrictive, even with extracting information from screens
 - Visit the Trading Post, search for something and hit F11 (or the big button on app)
 - Scan as many pages / orders you want (you might have problems when you scroll down, try to aim it right, whatever that means)
 - Hit the Export Prices button and save the json file.
-- After this, you can use the extracted prices at https://gaming.tools/newworld or wherever you like :)
 
 ## What is this gaming.tools shared price database?
 
