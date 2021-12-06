@@ -1,4 +1,4 @@
-# This tool is very likely to be against the [New World Terms of Service](https://www.amazon.com/gp/help/customer/display.html?nodeId=201482650&pop-up=1), so use it absolutely at your own risk.
+# This tool is very likely against the [New World Terms of Service](https://www.amazon.com/gp/help/customer/display.html?nodeId=201482650&pop-up=1), so use it absolutely at your own risk.
 
 See https://forums.newworld.com/t/sperrung-ohne-erkl%C3%A4rung/618381 for details.
 
