@@ -1,4 +1,4 @@
-# This tools is no longer under active development. 
+# This tool is no longer under active development. 
 
 # Screenshot Parser
 Easy to use TP screenshot parser.
