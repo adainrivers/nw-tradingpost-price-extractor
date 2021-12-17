@@ -1,4 +1,4 @@
-# This tool might not be compliant with the NW TOS and you might banned for using it. So, use it at _**your own risk**_.
+# This tool might not be compliant with the NW TOS and you might get banned for using it. So, use it at _**your own risk**_.
 
 # Screenshot Parser
 Easy to use TP screenshot parser.
