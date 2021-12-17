@@ -1,4 +1,4 @@
-# This tool is no longer under active development. 
+# This tool might not be compliant with the NW TOS and you might banned for using it. So, use it at _**your own risk**_.
 
 # Screenshot Parser
 Easy to use TP screenshot parser.
@@ -15,4 +15,4 @@ Take screenshots of TP in regular way. Then launch the tool and open screenshot 
 
 ## Use with caution
 
-### NW TOS is very restrictive, even with extracting information from screenshots, so, use it on _**your own risk**_.
+### NW TOS is very restrictive, even with extracting information from screenshots, so, use it at _**your own risk**_.
