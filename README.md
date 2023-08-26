@@ -1,5 +1,7 @@
 # This tool is no longer maintained. Please see https://nwmarketprices.com/ for an updated tool and market prices.
 
+See our newest website: [Paliapedia - Palia Database](https://paliapedia.com)
+
 # Screenshot Parser
 Easy to use TP screenshot parser.
 
